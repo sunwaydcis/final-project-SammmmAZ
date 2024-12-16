@@ -1,5 +1,6 @@
 package controller
 
-class StatisticPageController {
 
-}
+class StatisticPageController:
+end StatisticPageController
+
