@@ -254,7 +254,9 @@ object BiomeMap:
         end for
     // update the game map
     this.gameMap = updatedScrollPane
-
+    // debugger
+    Platform.runLater(() => updatedScrollPane.requestLayout())
+    println("BiomeMap update map view has been invoked")
   end UpdateMapView
 
   // define a new function to update the map data structure
@@ -297,7 +299,11 @@ object BiomeMap:
   
   // define wrapper functions to wrap updateMapView as runnable
   def RunnableUpdateMapView(): Runnable =
-    () => UpdateMapView()
+    new Runnable {
+      override def run(): Unit =
+        UpdateMapView()
+        println("RunnableUpdateMapView has been executed")
+    }
   end RunnableUpdateMapView
   
   // define wrapper function tp wrap update map data structure

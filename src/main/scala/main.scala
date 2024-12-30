@@ -49,7 +49,7 @@ object main extends JFXApp3:
   // function to call map updates
   def ScheduleRandomMapUpdate(): Unit =
     // select the delay to be between 1 - 5 seconds
-    val delay : Int = Random.nextInt(5000) + 1000
+    val delay : Int = Random.nextInt(1000) + 10000
     // use  the  future block
     Future{
       // Pause or delay for 1 second atleast
@@ -59,10 +59,19 @@ object main extends JFXApp3:
       GrowPopulation(Population.growthCounter)
       
       // call the Platform Runlater
-      Platform.runLater(
-        BiomeMap.RunnableUpdateMapView()
-      )
+      Platform.runLater(BiomeMap.RunnableUpdateMapView())
       println("Map has been updated")
+      RefreshStage()
       ScheduleRandomMapUpdate()
     }
+  end ScheduleRandomMapUpdate
+  
+  private def RefreshStage(): Unit =
+    Platform.runLater(
+      stage.scene = new Scene(1280, 720):
+        root = BiomeMap.loadBiomeMap
+    )
+    println("Stage has been refreshed")
+  end RefreshStage
+  
 
