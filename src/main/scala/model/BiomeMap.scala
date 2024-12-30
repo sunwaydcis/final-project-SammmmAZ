@@ -9,7 +9,6 @@ import scala.util.{Success, Failure}
 import scala.concurrent.*
 import scala.concurrent.ExecutionContext.Implicits.global
 import javafx.application.Platform
-
 import scala.util.{Random, Success}
 
 
@@ -116,19 +115,7 @@ object BiomeMap:
           queue.enqueue((cx + dx, cy + dy))
         }
 
-
-  // use Async method of generating BiomeMap map
-  def AsyncGenerateBiomeMap(): Unit =
-    val future = Future:
-      GenerateBiomeMap(mapDataArray = mapRegion)
-    end future
-
-    // Update the UI upon completing map generation
-    future.onComplete:
-      case Success(_) => Platform.runLater( new Runnable{ def run : Unit = updateMapView()})
-      case Failure(e) => println(f"Error with generating $e")
-  end AsyncGenerateBiomeMap
-
+  
   //def BiomeMapGenerator : Unit
   def GenerateBiomeMap( mapDataArray : Array[Array[Int]]): Unit =
     // Get number of total tiles:
@@ -246,7 +233,7 @@ object BiomeMap:
 
 
   // define a function to update the BiomeMap Control view
-  def updateMapView() : Unit =
+  private def UpdateMapView() : Unit =
     // returns the ScrollPane view with updated
     val updatedScrollPane = new ScrollPane:
       content = new Pane:
@@ -268,12 +255,10 @@ object BiomeMap:
     // update the game map
     this.gameMap = updatedScrollPane
 
-    Platform.runLater():
-      new Runnable {updatedScrollPane.requestLayout()}
   end updateMapView
 
   // define a new function to update the map data structure
-  def updateMapData(mapData : Array[Array[Int]], knownCityTiles : scala.collection.mutable.Set[(Int, Int)]) : Unit =
+  private def UpdateMapData(mapData : Array[Array[Int]], knownCityTiles : scala.collection.mutable.Set[(Int, Int)]) : Unit =
     // use sequence data structure to store order in which the city will expand
     val directions = Seq(
       (-1, 0), // North
@@ -307,14 +292,17 @@ object BiomeMap:
         end if
       end for
     end for
-
-
-
-
-
-
-
-
-
-
-
+  end updateMapData
+  
+  // define wrapper functions to wrap updateMapView as runnable
+  def RunnableUpdateMapView(): Runnable =
+    def run(): Unit = UpdateMapView()
+  end RunnableUpdateMapView
+  
+  // define wrapper function tp wrap update map data structure
+  def RunnableUpdateMapData(): Runnable =
+    def run(): Unit = UpdateMapData(mapData = this.mapRegion, knownCityTiles = cityTiles)
+  end RunnableUpdateMapData
+  
+  
+  

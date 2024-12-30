@@ -19,8 +19,10 @@ import scala.util.Random
 
 
 object main extends JFXApp3:
-  
+
   // define an execution thread to manage thread pool for background tasks
+  // allows to run Background operation without blocking UI thread
+  // enables application to remain responsive
   implicit val execContext: ExecutionContext = ExecutionContext.global
 
   override  def start(): Unit =
@@ -42,25 +44,15 @@ object main extends JFXApp3:
     scheduleRandomMapUpdate()
   end start
 
-  def scheduleRandomMapUpdate(): Unit = {
-    // Random delay between updates (e.g., between 1 and 5 seconds)
-    val delay = Random.nextInt(5000) + 1000 // delay in milliseconds, between 1000ms and 6000ms
+  // function to call map updates
+  def ScheduleRandomMapUpdate(): Unit =
+    // select the delay to be between 1 - 5 seconds
+    val delay : Int = Random.nextInt(5000) + 1000
 
-    // Schedule the update to run after the random delay
-    scheduler.schedule(new Runnable {
-      override def run(): Unit = {
-        // Simulate population growth or map update logic
-        GrowPopulation(growthCounter)
+    // use  the  future block
+    Future{
+      // Pause or delay for 1 second atleast
+      Thread.sleep(delay)
 
-        // Call the map update
-        Platform.runLater {
-          updateMapData(BiomeMap.mapRegion, BiomeMap.cityTiles)
-          updateMapView()
-        }
-        println("Updated Map Once")
-        // Recursively schedule the next update with a new random delay
-        scheduleRandomMapUpdate()
-      }
-    }, delay, TimeUnit.MILLISECONDS)
-  }
+    }
 
