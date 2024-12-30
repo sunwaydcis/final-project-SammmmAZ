@@ -5,6 +5,7 @@ import scalafx.scene.Scene
 import scalafx.scene.control.ScrollPane
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.Pane
+
 import scala.util.{Success, Failure}
 import scala.concurrent.*
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -235,6 +236,11 @@ object BiomeMap:
   // define a function to update the BiomeMap Control view
   private def UpdateMapView() : Unit =
     // returns the ScrollPane view with updated
+    
+    // record original hVal and vVal to make sure scroll pane stays at same position
+    val hVal: Double = this.gameMap.hvalue.toDouble
+    val vVal : Double = this.gameMap.vvalue.toDouble
+    
     val updatedScrollPane = new ScrollPane:
       content = new Pane:
         // goes through the map
@@ -254,6 +260,8 @@ object BiomeMap:
         end for
     // update the game map
     this.gameMap = updatedScrollPane
+    this.gameMap.hvalue = hVal
+    this.gameMap.vvalue = vVal
     // debugger
     Platform.runLater(() => updatedScrollPane.requestLayout())
     println("BiomeMap update map view has been invoked")
