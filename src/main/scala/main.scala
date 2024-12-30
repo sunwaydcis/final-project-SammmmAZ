@@ -4,9 +4,10 @@
 import scalafx.application.{JFXApp3, Platform}
 import scalafx.scene.Scene
 import model.BiomeMap
-import model.BiomeMap.{updateMapData, updateMapView}
+import model.BiomeMap.{RunnableUpdateMapData, RunnableUpdateMapView}
 import model.Population.{GrowPopulation, growthCounter}
 import scalafx.scene.control.ScrollPane
+import model.Population
 
 // import scala libraries for UI updates and batch updates:
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,21 +39,30 @@ object main extends JFXApp3:
       title = "Biome Map Game"
       scene = new Scene(1280,720):
         root = gameMap
+        maximized = true
 
 
     // run the random map update
-    scheduleRandomMapUpdate()
+    ScheduleRandomMapUpdate()
   end start
 
   // function to call map updates
   def ScheduleRandomMapUpdate(): Unit =
     // select the delay to be between 1 - 5 seconds
     val delay : Int = Random.nextInt(5000) + 1000
-
     // use  the  future block
     Future{
       // Pause or delay for 1 second atleast
       Thread.sleep(delay)
-
+      
+      // call the grow population function
+      GrowPopulation(Population.growthCounter)
+      
+      // call the Platform Runlater
+      Platform.runLater(
+        BiomeMap.RunnableUpdateMapView()
+      )
+      println("Map has been updated")
+      ScheduleRandomMapUpdate()
     }
 

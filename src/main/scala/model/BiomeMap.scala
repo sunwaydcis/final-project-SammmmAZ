@@ -255,10 +255,10 @@ object BiomeMap:
     // update the game map
     this.gameMap = updatedScrollPane
 
-  end updateMapView
+  end UpdateMapView
 
   // define a new function to update the map data structure
-  private def UpdateMapData(mapData : Array[Array[Int]], knownCityTiles : scala.collection.mutable.Set[(Int, Int)]) : Unit =
+  def UpdateMapData(mapData : Array[Array[Int]], knownCityTiles : scala.collection.mutable.Set[(Int, Int)]) : Unit =
     // use sequence data structure to store order in which the city will expand
     val directions = Seq(
       (-1, 0), // North
@@ -287,21 +287,22 @@ object BiomeMap:
           mapRegion(newX)( newY) = 3
           // add the new set of coordinate to CityTiles
           cityTiles.add((newX, newY))
+          println(f"$newX, $newY has been added to city tiles")
           // change it to true to update the city once
           isCurrentCityUpdated = true
         end if
       end for
     end for
-  end updateMapData
+  end UpdateMapData
   
   // define wrapper functions to wrap updateMapView as runnable
   def RunnableUpdateMapView(): Runnable =
-    def run(): Unit = UpdateMapView()
+    () => UpdateMapView()
   end RunnableUpdateMapView
   
   // define wrapper function tp wrap update map data structure
   def RunnableUpdateMapData(): Runnable =
-    def run(): Unit = UpdateMapData(mapData = this.mapRegion, knownCityTiles = cityTiles)
+    () => UpdateMapData(mapData = this.mapRegion, knownCityTiles = cityTiles)
   end RunnableUpdateMapData
   
   
