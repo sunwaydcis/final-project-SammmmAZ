@@ -1,5 +1,8 @@
 package model
 
+import model.BiomeMap
+import model.BiomeMap.updateMapData
+
 object Population:
   // to self update 
   val isDynamic : Boolean = true
@@ -20,8 +23,8 @@ object Population:
   
   // define a growth function
   def GrowPopulation(counter : Int): Unit =
-    
-  
+    this.population_total += 5000
+    updateMapData(mapData = BiomeMap.mapRegion, knownCityTiles = BiomeMap.cityTiles)
   // def a growth function for each city
   // def PopulationGrowthPerCity(): Unit
   

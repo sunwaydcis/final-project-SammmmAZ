@@ -5,8 +5,12 @@ import scalafx.scene.Scene
 import scalafx.scene.control.ScrollPane
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.Pane
+import scala.util.{Success, Failure}
+import scala.concurrent.*
+import scala.concurrent.ExecutionContext.Implicits.global
+import javafx.application.Platform
 
-import scala.util.Random
+import scala.util.{Random, Success}
 
 
 
@@ -32,11 +36,11 @@ object BiomeMap:
   // map will have pixels of 450 by 450
   // a suggestion to increase the size or decrease it based on game difficulty
 
-  var gameMap : ScrollPane = GenerateBiomeMap(mapDataArray = mapRegion)
+  var gameMap : ScrollPane = loadBiomeMap
   // image var traits
   // tile pixel size
-  var mapHeight: Int = 450
-  var mapWidth: Int = 450
+  var mapHeight: Int = 240
+  var mapWidth: Int = 240
   // tileSize : Corresponds to pixel length or width of sprite used as map floor
   // check sprite file, if sprite pixel size is 8x8, then enter 8
   // if sprite size is bigger than this, the sprite will be automatically scaled down
@@ -69,7 +73,7 @@ object BiomeMap:
   val mapRegion: Array[Array[Int]] = Array.fill(mapHeight, mapWidth)(1)
 
   // to track city tiles
-  private var cityTiles = scala.collection.mutable.Set[(Int, Int)]() // Track city tile coordinates
+  var cityTiles = scala.collection.mutable.Set[(Int, Int)]() // Track city tile coordinates
 
   // to map map region data to imageview
   // maps interger to image view
@@ -112,8 +116,21 @@ object BiomeMap:
           queue.enqueue((cx + dx, cy + dy))
         }
 
+
+  // use Async method of generating BiomeMap map
+  def AsyncGenerateBiomeMap(): Unit =
+    val future = Future:
+      GenerateBiomeMap(mapDataArray = mapRegion)
+    end future
+
+    // Update the UI upon completing map generation
+    future.onComplete:
+      case Success(_) => Platform.runLater( new Runnable{ def run : Unit = updateMapView()})
+      case Failure(e) => println(f"Error with generating $e")
+  end AsyncGenerateBiomeMap
+
   //def BiomeMapGenerator : Unit
-  private def GenerateBiomeMap( mapDataArray : Array[Array[Int]]): ScrollPane =
+  def GenerateBiomeMap( mapDataArray : Array[Array[Int]]): Unit =
     // Get number of total tiles:
     val totalTiles = mapWidth*mapHeight
 
@@ -171,7 +188,7 @@ object BiomeMap:
     while !cityAddedFlag do
       var cityCoordsX : Int = Random.nextInt(mapHeight)
       var cityCoordsY : Int = Random.nextInt(mapWidth)
-      if mapRegion(cityCoordsX)(cityCoordsY) == 1 then
+      if cityCoordsX >80 && cityCoordsX < mapHeight - 80 && cityCoordsY > 80 && cityCoordsY < mapWidth -80 && mapRegion(cityCoordsX)(cityCoordsY) == 1 then
         cityTiles.add((cityCoordsX, cityCoordsY))
         // adds the city coordinate to the cityTiles
         mapRegion(cityCoordsX)(cityCoordsY) = 3
@@ -215,7 +232,7 @@ object BiomeMap:
     end scrollPane
 
     // returns the scroll pane
-    scrollPane
+    this.gameMap = scrollPane
   end GenerateBiomeMap
 
 
@@ -229,7 +246,7 @@ object BiomeMap:
 
 
   // define a function to update the BiomeMap Control view
-  def updateMapView() : ScrollPane =
+  def updateMapView() : Unit =
     // returns the ScrollPane view with updated
     val updatedScrollPane = new ScrollPane:
       content = new Pane:
@@ -248,7 +265,11 @@ object BiomeMap:
             children.add(imageView)
           end for
         end for
-    updatedScrollPane
+    // update the game map
+    this.gameMap = updatedScrollPane
+
+    Platform.runLater():
+      new Runnable {updatedScrollPane.requestLayout()}
   end updateMapView
 
   // define a new function to update the map data structure
