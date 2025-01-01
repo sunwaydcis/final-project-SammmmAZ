@@ -99,7 +99,7 @@ object BiomeMap:
   val mapRegion: Array[Array[Int]] = Array.fill(mapHeight, mapWidth)(1)
 
   // to track city tiles
-  var cityTiles = scala.collection.mutable.Set[(Int, Int)]() // Track city tile coordinates
+  var cityTiles : scala.collection.mutable.Set[(Int, Int)]= scala.collection.mutable.Set[(Int, Int)]() // Track city tile coordinates
 
   // to map map region data to imageview
   // maps interger to image view

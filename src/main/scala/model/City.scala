@@ -1,12 +1,12 @@
 package model
 
-import model.City.RandomTextureAssigning
+import model.City.{GetGenerationPoint, RandomTextureAssigning}
 import scalafx.scene.image.Image
 // import texture packs for map processing key
 import java.lang.Runnable
 import scala.collection.mutable.ListBuffer
 import scala.language.postfixOps
-
+import scala.util.Random
 
 // companion object city
 object City:
@@ -24,7 +24,7 @@ object City:
   // start population is subtracted from an existing city's population
 
   // for access of dynamic element function execution
-  private var ListOfCity : scala.collection.mutable.ListBuffer[City] = ListBuffer[City]()
+  // private var ListOfCity : scala.collection.mutable.ListBuffer[City] = ListBuffer[City]()
 
   // define scheme for assigning tile identity for the cityTexture variable
 
@@ -72,18 +72,50 @@ object City:
     // to select and pop one random city texture from the city texture variable
     // and assign it to a an object of the class city
     val selectedTexture : List[Int] = this.cityTexture.head
-    this.cityTexture.drop(selectedTexture)
+    this.cityTexture.drop(0)
     println(this.cityTexture) // for debug purposes
     selectedTexture
   end RandomTextureAssigning
 
-  private var possibleGenerationPoints : List[()=> Boolean] =
+  private var possibleGenerationPoints : List[(Int, Int, Int, Int)=> Boolean] =
     List(
-      (x : Int, y : Int , maxY : Int, maxX : Int) -> (x >= 50 && x <= 100) && (y >= 50 && y <= 100),
-      (x: Int, y : Int, maxY : Int, maxX : Int) -> ( x>= 50 && x< 100) && ( y>= maxY -100 && y <= maxY -50)
+      (x : Int, y : Int , maxY : Int, maxX : Int) => (x >= 50 && x <= 100) && (y >= 50 && y <= 100),
+      (x: Int, y : Int, maxY : Int, maxX : Int) => ( x>= 50 && x< 100) && ( y>= maxY -100 && y <= maxY -50),
+      (x: Int, y : Int, maxY : Int, maxX : Int) => ( x>= maxX -100 && x <= maxX -50) && (y >= 50 && y <= 100),
+      (x: Int, y : Int, maxY : Int, maxX : Int) => ( x>= maxX -100 && x <= maxX -50) && ( y>= maxY -100 && y <= maxY -50)
     )
   // a city will only be generated in a fixed generation point, random between the 4 spawn centers
-  protected[model] def GetGenerationBoundary : (Int, Int) =
+  protected[model] def GetGenerationPoint : (Int, Int) =
+    // get the filter
+    println(this.possibleGenerationPoints) // to debug
+    val pointFilter : (Int,Int,Int,Int) => Boolean = possibleGenerationPoints.head
+    this.possibleGenerationPoints = possibleGenerationPoints.tail
+    // debug purpose:
+    println(this.possibleGenerationPoints)
+
+    // declare flag to stop the loop once a generation point has been found
+    var hasGeneratedPoints : Boolean = false
+    var points : (Int,Int) = (0,0)
+    
+    while !hasGeneratedPoints do
+      // define potential points for city
+      val point_x : Int = Random.between(1, BiomeMap.mapHeight)
+      val point_y : Int = Random.between(1, BiomeMap.mapWidth)
+      // obtain constraints from BiomeMap object
+      val max_x : Int = BiomeMap.mapHeight
+      val max_y : Int = BiomeMap.mapWidth
+
+      if (pointFilter(point_x, point_y, max_x, max_y)) then
+        hasGeneratedPoints = true
+        points = (point_x, point_y) // store them as return value
+        println(f"Points for city generation starts at $points") // for debug
+      end if
+    points
+  end GetGenerationPoint
+
+
+
+
 end City
 
 
@@ -91,10 +123,18 @@ end City
 class City():
   // to hold all background process list of each city
   var backgroundProcesslist : List[Runnable] = List()
+
   val texturePacks : List[Int] = RandomTextureAssigning
-  //val generationPoint : (Int, Int) =
   // will have fixed texture packs
+
+  val generationPoint : (Int, Int) = GetGenerationPoint
   // will have fixed spawning locations
+  
+  // list of all city tiles:
+  var cityTiles : scala.collection.mutable.Set[(Int, Int)] = scala.collection.mutable.Set[(Int, Int)]().add(generationPoint)
+  
+  //  
+
 
 
 
