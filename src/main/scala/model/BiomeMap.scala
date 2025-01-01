@@ -39,14 +39,14 @@ object BiomeMap:
   var gameMap : ScrollPane = loadBiomeMap
   // image var traits
   // tile pixel size
-  var mapHeight: Int = 250
-  var mapWidth: Int = 250
+  protected[model] var mapHeight: Int = 250
+  protected[model] var mapWidth: Int = 250
   // tileSize : Corresponds to pixel length or width of sprite used as map floor
   // check sprite file, if sprite pixel size is 8x8, then enter 8
   // if sprite size is bigger than this, the sprite will be automatically scaled down
   // else: Sprite size smaller than this, will cause holes to appear in app
   // rule : scale the tileSize down to smallest size of pixel length of tile used
-  val tileSize: Int = 8
+  protected[model] val tileSize: Int = 8
 
 
   // difficulty adjustment
@@ -57,14 +57,14 @@ object BiomeMap:
 
   // Biome distribution ratios
   // game now has 3 biomes:
-  var mountainRatio: Double = 0.05
-  var waterRatio: Double = 0.15
-  var plainsRatio: Double = 1 - mountainRatio - waterRatio
+  protected[model] var mountainRatio: Double = 0.05
+  protected[model] var waterRatio: Double = 0.15
+  protected[model] var plainsRatio: Double = 1 - mountainRatio - waterRatio
 
   // set water, plains and mountain tiles & city tile
-  val plainsTile: Image = new Image(getClass.getResource("/image/tiles/plainsTile.png").toExternalForm)
-  val waterTile: Image = new Image(getClass.getResource("/image/tiles/waterTile.png").toExternalForm)
-  val mountainTile: Image = new Image(getClass.getResource("/image/tiles/mountainFloorTile.png").toExternalForm)
+  private val plainsTile: Image = new Image(getClass.getResource("/image/tiles/plainsTile.png").toExternalForm)
+  private val waterTile: Image = new Image(getClass.getResource("/image/tiles/waterTile.png").toExternalForm)
+  private val mountainTile: Image = new Image(getClass.getResource("/image/tiles/mountainFloorTile.png").toExternalForm)
   // new city tile
   //val cityTile : Image = new Image(getClass.getResource("/image/tiles/cityTile.png").toExternalForm)
   val cityTile : Image = new Image(getClass.getResource("/image/tiles/city/CT1_urban.jpg").toExternalForm)
@@ -74,11 +74,11 @@ object BiomeMap:
   
   // for city A
   // numbered 3
-  val city_set_1a : Image = new Image(getClass.getResource("/image/tiles/city/CT1_urban.jpg").toExternalForm)
+  protected[model] val city_set_1a : Image = new Image(getClass.getResource("/image/tiles/city/CT1_urban.jpg").toExternalForm)
   // numbered 4
-  val city_set_1b : Image = new Image(getClass.getResource("/image/tiles/city/CT1_suburban.jpg").toExternalForm)
+  protected[model] val city_set_1b : Image = new Image(getClass.getResource("/image/tiles/city/CT1_suburban.jpg").toExternalForm)
   // numbered 5
-  val city_set_1c : Image = new Image(getClass.getResource("/image/tiles/city/CT1_rural.jpg").toExternalForm)
+  protected[model] val city_set_1c : Image = new Image(getClass.getResource("/image/tiles/city/CT1_rural.jpg").toExternalForm)
   
   // for city B
   // numbered 6
@@ -103,7 +103,19 @@ object BiomeMap:
 
   // to map map region data to imageview
   // maps interger to image view
-  val regionToSprite: Map[Int, Image] = Map(0 -> waterTile, 1 -> plainsTile, 2 -> mountainTile, 3 -> cityTile)
+  val regionToSprite: Map[Int, Image] = 
+    Map(0 -> waterTile,
+      1 -> plainsTile,
+      2 -> mountainTile,
+      3 -> city_set_1a,
+      4 -> city_set_1b,
+      5 -> city_set_1c,
+      6 -> city_set_2a,
+      7 -> city_set_2b,
+      8 -> city_set_2c,
+      9 -> city_set_3a,
+      10 -> city_set_3b,
+      11 -> city_set_3c)
 
 
   private def IsValid(x: Int, y: Int, visited: Array[Array[Boolean]], mapRegions: Array[Array[Int]]): Boolean =

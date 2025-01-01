@@ -1,7 +1,8 @@
 package model
 
+import model.City.RandomTextureAssigning
 import scalafx.scene.image.Image
-
+// import texture packs for map processing key
 import java.lang.Runnable
 import scala.collection.mutable.ListBuffer
 import scala.language.postfixOps
@@ -46,28 +47,54 @@ object City:
   // CT3_rural -> 11
 
   // static set of tile graphics
-  private var cityTexture :List[Map[Int,Image]] = List(Map(),Map(),Map())
+  private var cityTexture :List[List[Int]] =
+    List(
+      // for the first texture pack of the BiomeMap
+      List(
+      3 ,
+      4 ,
+      5
+    ),
+      List(
+        6 ,
+        7 ,
+        8
+      ),
+      List(
+        9 ,
+        10,
+        11
+      ))
+
   // once a city object has been initiated, it will remove the mapping from this list
-  protected[model] def RandomTextureAssigning : Map[Int,Image] =
+  protected[model] def RandomTextureAssigning : List[Int] =
     println(this.cityTexture) // for debug purposes
     // to select and pop one random city texture from the city texture variable
     // and assign it to a an object of the class city
-    val selectedTexture : Map[Int,Image] = this.cityTexture.head
-    this.cityTexture.drop(0)
+    val selectedTexture : List[Int] = this.cityTexture.head
+    this.cityTexture.drop(selectedTexture)
     println(this.cityTexture) // for debug purposes
     selectedTexture
   end RandomTextureAssigning
 
-
-
+  private var possibleGenerationPoints : List[()=> Boolean] =
+    List(
+      (x : Int, y : Int , maxY : Int, maxX : Int) -> (x >= 50 && x <= 100) && (y >= 50 && y <= 100),
+      (x: Int, y : Int, maxY : Int, maxX : Int) -> ( x>= 50 && x< 100) && ( y>= maxY -100 && y <= maxY -50)
+    )
+  // a city will only be generated in a fixed generation point, random between the 4 spawn centers
+  protected[model] def GetGenerationBoundary : (Int, Int) =
 end City
 
 
 
-abstract class City extends Runnable:
+class City():
   // to hold all background process list of each city
   var backgroundProcesslist : List[Runnable] = List()
-  //
+  val texturePacks : List[Int] = RandomTextureAssigning
+  //val generationPoint : (Int, Int) =
+  // will have fixed texture packs
+  // will have fixed spawning locations
 
 
 
