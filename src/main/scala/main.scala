@@ -60,7 +60,7 @@ object main extends JFXApp3:
       GrowPopulation(Population.growthCounter)
       // call the Platform Runlater
       Platform.runLater(BiomeMap.RunnableUpdateMapView())
-      println(f"Map updated times: ${Population.growthCounter}")
+      //println(f"Map updated times: ${Population.growthCounter}")
       RefreshStage()
       ScheduleRandomMapUpdate()
     }

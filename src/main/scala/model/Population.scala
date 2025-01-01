@@ -17,7 +17,6 @@ object Population:
   // the city or population must spread, thus a threshold to check if the
   // population can send a new colonizing team to build new establishments
   // and start a new city else where
-  
   var growthCounter : Int = 0
   
   // define a growth function
@@ -28,7 +27,7 @@ object Population:
     val cityTiles = BiomeMap.cityTiles
     //println(f"Population is now at $pop_now")
     //println(f"City tiles now at $cityTiles")
-    BiomeMap.UpdateMapDataII(mapData = BiomeMap.mapRegion, knownCityTiles = BiomeMap.cityTiles)
+    BiomeMap.UpdateMapDataIII()
   end GrowPopulation
   
   // def a growth function for each city

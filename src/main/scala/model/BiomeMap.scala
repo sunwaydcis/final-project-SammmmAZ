@@ -5,13 +5,15 @@ import scalafx.scene.Scene
 import scalafx.scene.control.ScrollPane
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.Pane
-import scala.collection.mutable.Queue
-import scala.util.{Success, Failure}
+
+import scala.collection.mutable.{ListBuffer, Queue}
+import scala.util.{Failure, Success}
 import scala.concurrent.*
 import scala.concurrent.ExecutionContext.Implicits.global
 import javafx.application.Platform
-import scala.util.{Random, Success}
 
+import scala.util.{Random, Success}
+import model.City
 
 
 // represents model class / singleton object for Game Map
@@ -71,7 +73,7 @@ object BiomeMap:
 
 
   // added new texture packs for city's
-  
+
   // for city A
   // numbered 3
   protected[model] val city_set_1a : Image = new Image(getClass.getResource("/image/tiles/city/CT1_urban.jpg").toExternalForm)
@@ -79,7 +81,7 @@ object BiomeMap:
   protected[model] val city_set_1b : Image = new Image(getClass.getResource("/image/tiles/city/CT1_suburban.jpg").toExternalForm)
   // numbered 5
   protected[model] val city_set_1c : Image = new Image(getClass.getResource("/image/tiles/city/CT1_rural.jpg").toExternalForm)
-  
+
   // for city B
   // numbered 6
   val city_set_2a : Image = new Image(getClass.getResource("/image/tiles/city/CT2_Urban.png").toExternalForm)
@@ -87,7 +89,7 @@ object BiomeMap:
   val city_set_2b : Image = new Image(getClass.getResource("/image/tiles/city/CT2_suburban.png").toExternalForm)
   // numbered 8
   val city_set_2c : Image = new Image(getClass.getResource("/image/tiles/city/CT2_rural.png").toExternalForm)
-  
+
   // for city C
   // numbered 9
   val city_set_3a : Image = new Image(getClass.getResource("/image/tiles/city/CT3_Urban.jpg").toExternalForm)
@@ -98,12 +100,15 @@ object BiomeMap:
   // define data structure that will update the map
   val mapRegion: Array[Array[Int]] = Array.fill(mapHeight, mapWidth)(1)
 
+  // define a list of City objects
+  var ListOfCity : ListBuffer[City] = ListBuffer()
+
   // to track city tiles
   var cityTiles : scala.collection.mutable.Set[(Int, Int)]= scala.collection.mutable.Set[(Int, Int)]() // Track city tile coordinates
 
   // to map map region data to imageview
   // maps interger to image view
-  val regionToSprite: Map[Int, Image] = 
+  val regionToSprite: Map[Int, Image] =
     Map(0 -> waterTile,
       1 -> plainsTile,
       2 -> mountainTile,
@@ -197,52 +202,42 @@ object BiomeMap:
 
     // add mountain tile counter
     // map doesn't randomly generate with
-    var currentMountainCount = 0
+    var currentMountainCount : Int = 0
 
     while currentMountainCount < mountainCount do
       // selects a random point on the map
-      val startX = Random.nextInt(mapHeight)
-      val startY = Random.nextInt(mapWidth)
+      val startX : Int= Random.nextInt(mapHeight)
+      val startY : Int= Random.nextInt(mapWidth)
       // check if point has been visited or not
       if mapRegion(startX)(startY) == 1 then
-        val mountainSize = Random.between(10, 30)
+        val mountainSize : Int = Random.between(10, 30)
         randomFloodFill(startX, startY, 2, mountainSize, visitedRegion, mapRegion)
         currentMountainCount += mountainSize
       end if
     end while
 
-    // creates scroll pane
+    // instantiates a city
+    var city1 : City = new City
+    city1.AddCityToMap(city1.generationPoint)
+    this.ListOfCity.append(city1)
 
 
-    // initialize city center
-    var cityAddedFlag = false
-    while !cityAddedFlag do
-      var cityCoordsX : Int = Random.nextInt(mapHeight)
-      var cityCoordsY : Int = Random.nextInt(mapWidth)
-      if cityCoordsX >80 && cityCoordsX < mapHeight - 80 && cityCoordsY > 80 && cityCoordsY < mapWidth -80 && mapRegion(cityCoordsX)(cityCoordsY) == 1 then
-        cityTiles.add((cityCoordsX, cityCoordsY))
-        // adds the city coordinate to the cityTiles
-        mapRegion(cityCoordsX)(cityCoordsY) = 3
-        // change the map region array data for that coordinate to be 3
-        cityAddedFlag = true
-        // change the flag tp true
-      end if
-    end while
+    // instantiate another city
+    var city2 : City = new City
+    city2.AddCityToMap(city2.generationPoint)
+    this.ListOfCity.append(city2)
 
+    var city3 : City = new City
+    city3.AddCityToMap(city3.generationPoint)
+    this.ListOfCity.append(city3)
 
-
-
-    // maps interger to image view
-    val regionToSprite = Map(0 -> waterTile, 1 -> plainsTile, 2 -> mountainTile, 3 -> cityTile)
-
-    // initialize city center
 
     // creates a pane
     val pane = new Pane()
     for i <- mapRegion.indices do
       for j <- mapRegion(i).indices do
         val region = mapRegion(i)(j)
-        val tile = regionToSprite(region)
+        val tile = this.regionToSprite(region)
         val imageView = new ImageView(tile):
           x = j * tileSize
           y = i * tileSize
@@ -364,7 +359,7 @@ object BiomeMap:
       val dy : Int = nextTileVector(1)
 
       while tiletoAdd != 0 do
-        for ((x,y)<- knownCityTiles  if !tileAdded && tiletoAdd!= 0) 
+        for ((x,y)<- knownCityTiles  if !tileAdded && tiletoAdd!= 0)
           // get coordinate of city tile
           val x_coordinate : Int = x
           val y_coordinate : Int = y
@@ -394,7 +389,7 @@ object BiomeMap:
 
 
   // direction data:
-  private var directions : scala.collection.mutable.Queue[(Int,Int)] = Queue(
+  private var directions: scala.collection.mutable.Queue[(Int, Int)] = Queue(
     (-1, 0), // North
     (1, 0), // South
     (0, -1), // West
@@ -417,6 +412,17 @@ object BiomeMap:
     // returns the pointedDirection
     pointedDirection
   end GetDirection
+
+  // define new functions to work with Cities
+  protected[model] def UpdateMapDataIII(): Unit =
+    //println("UpdateMapDataIII has been called")
+    var counter : Int = 1 // for debug purposes
+    for city <- this.ListOfCity do
+      city.ExpandCity()
+      //println(s"City $counter has expanded") // for debug purposes
+    end for
+  end UpdateMapDataIII
+
 
   // define wrapper functions to wrap updateMapView as runnable
   def RunnableUpdateMapView(): Runnable =
