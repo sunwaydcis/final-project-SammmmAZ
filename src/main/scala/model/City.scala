@@ -1,7 +1,9 @@
 package model
 
-import model.City.{GetGenerationPoint, RandomTextureAssigning}
+import model.City.{GetGenerationPoint, RandomTextureAssigning, max_rural_tiles, max_suburban_tiles, max_urban_tiles}
 import scalafx.scene.image.Image
+
+import scala.language.dynamics
 // import texture packs for map processing key
 import java.lang.Runnable
 import scala.collection.mutable.ListBuffer
@@ -106,37 +108,132 @@ object City:
       val max_y : Int = BiomeMap.mapWidth
 
       if (pointFilter(point_x, point_y, max_x, max_y)) then
+        // side note, the regions in which the point is selected, is all 1's due to the filtering method added into the isValid fx in BiomeMap
         hasGeneratedPoints = true
         points = (point_x, point_y) // store them as return value
         println(f"Points for city generation starts at $points") // for debug
       end if
     points
   end GetGenerationPoint
-
-
-
-
 end City
 
 
 
 class City():
   // to hold all background process list of each city
-  var backgroundProcesslist : List[Runnable] = List()
+  var backgroundProcesslist : List[Runnable] = 
+    List(
+      () => ExpandCity()
+    )
 
   val texturePacks : List[Int] = RandomTextureAssigning
   // will have fixed texture packs
-
   val generationPoint : (Int, Int) = GetGenerationPoint
   // will have fixed spawning locations
-  
   // list of all city tiles:
-  var cityTiles : scala.collection.mutable.Set[(Int, Int)] = scala.collection.mutable.Set[(Int, Int)]().add(generationPoint)
+  var cityTiles : scala.collection.mutable.Set[(Int, Int)] = scala.collection.mutable.Set[(Int, Int)]()
+  // put a counter on the urban tiles
+  var urbanTileCounter : Int = 0
+  // put a counter on the suburban tiles
+  var suburbanTileCounter : Int = 0
+  // put a counter on the rural tiles
+  var ruralTileCounter : Int = 0
+  //  function to call edit or update BiomeMap Map Data
+  protected[model] def AddCityToMap( point : (Int,Int)): Unit =
+    // unpack tuple data
+    val coordsX : Int = point(0)
+    val coordsY : Int = point(1)
+    // access BiomeMap Data & assign the first point
+    BiomeMap.mapRegion(coordsX)(coordsY) = texturePacks(0)
+    // first tile of a city is always an urban tile
+    this.urbanTileCounter += 1
+    println(s"The city has been added at $coordsX, $coordsY")
+  end AddCityToMap
+  // helper data for ExpandCity Function
+  // direction data:
+  private var directions: scala.collection.mutable.Queue[(Int, Int)] = Queue(
+    (-1, 0), // North
+    (1, 0), // South
+    (0, -1), // West
+    (0, 1), // East
+    (-1, -1), // North-West
+    (-1, 1), // North-East
+    (1, -1), // South-West
+    (1, 1) // South-East
+  )
+
+  // function to expand city
+  protected[model] def ExpandCity(): Unit =
+    // the function always update only one tile, by changing 1 on map array data to one of city's texture tile
+    
+    // step 1: define a flag for to initiate the loop
+    var cityExpandedFlag : Boolean = false
+    var tileToAdd: Int = 1
+    // step 2 : initiate a loop 
+    while !cityExpandedFlag do
+      // obtain the next direction from the direction vector collection
+      val pointedDirection: (Int, Int) = this.directions.dequeue()
+      // move the direction used to the back
+      this.directions.enqueue(pointedDirection)
+      
+      // unpack the direction into
+      // 1. dx - changes in x
+      val dx : Int = pointedDirection(0)
+      // 2. dy - changes in y
+      val dy : Int = pointedDirection(1)
+      
+      // initiate another loop
+      while tileToAdd != 0 do
+        for ((x,y) <- this.cityTiles if !cityExpandedFlag && tileToAdd!=0 ) 
+          // calculate the next to-be tile in the city
+          val nextX : Int = x + dx
+          val nextY : Int = y + dy
+          
+          // filter
+          if nextX > 0 && nextX < BiomeMap.mapHeight - 1 && nextY > 0 && nextY < BiomeMap.mapWidth - 1 && mapRegion(nextX)(nextY) == 1 then
+            // check if the urban city tile has reached is limit
+            if urbanTileCounter != max_urban_tiles then
+              BiomeMap.mapRegion(nextX)(nextY) = this.texturePacks(0)
+              println(f"Urban tile added to $nextX, $nextY") // for debug purposes
+              urbanTileCounter += 1
+              println(f"Urban tile for this city is $urbanTileCounter") // for debug purposes
+              // set the expanded flag to true
+              cityExpandedFlag = true
+              // deduct the tile to add counter
+              tileToAdd -= 1
+            else if suburbanTileCounter !=  max_suburban_tiles then
+              BiomeMap.mapRegion(nextX)(nextY) = this.texturePacks(1)
+              println(f"subsurban tile added to $nextX,$nextY") // for debug purposes
+              this.suburbanTileCounter += 1
+              println(f"Suburban tile for this city is $suburbanTileCounter") // for debug purposes
+              // set the expanded flag to true
+              cityExpandedFlag = true
+              // deduct the tile to add counter
+              tileToAdd -= 1
+            else if ruralTileCounter != max_rural_tiles then
+              BiomeMap.mapRegion(nextX)(nextY) = this.texturePacks(2)
+              println(f"rural tile assed to $nextX,$nextY")
+              this.ruralTileCounter += 1
+              println(f"rural tile for this city is $ruralTileCounter") // for debug 
+              // set the expanded flag to true
+              cityExpandedFlag = true
+              // deduct the tile to add counter
+              tileToAdd -= 1
+            end if
+          end if
+        end for
+      end while
+    end while
+  end ExpandCity
   
-  //  
-
-
-
-
-
+  // function to add specific buildings to the city
+  // def AddHospital(): Unit
+  //     add certain affects: use stronger growth function
+  //     work over the algorithm
+  
+  // def AddCommercialCenter(): Unit
+  //     add certain effects: Increase money production rate
+  
+  // def AddFarm(): Unit
+  //     add effect : city now produces food 
 end City
