@@ -39,8 +39,8 @@ object BiomeMap:
   var gameMap : ScrollPane = loadBiomeMap
   // image var traits
   // tile pixel size
-  var mapHeight: Int = 240
-  var mapWidth: Int = 240
+  var mapHeight: Int = 250
+  var mapWidth: Int = 250
   // tileSize : Corresponds to pixel length or width of sprite used as map floor
   // check sprite file, if sprite pixel size is 8x8, then enter 8
   // if sprite size is bigger than this, the sprite will be automatically scaled down
@@ -267,8 +267,8 @@ object BiomeMap:
     //println("BiomeMap update map view has been invoked")
   end UpdateMapView
 
-  // define a new function to update the map data structure
-  def UpdateMapData(mapData : Array[Array[Int]], knownCityTiles : scala.collection.mutable.Set[(Int, Int)]) : Unit =
+  // remove access from other functions
+  private def UpdateMapData(mapData : Array[Array[Int]], knownCityTiles : scala.collection.mutable.Set[(Int, Int)]) : Unit =
     // use sequence data structure to store order in which the city will expand
     val directions = Seq(
       (-1, 0), // North
@@ -308,7 +308,7 @@ object BiomeMap:
 
   // define a function that updates the map data structure
   // only update one tile
-  def UpdateMapDataII(mapData : Array[Array[Int]], knownCityTiles : scala.collection.mutable.Set[(Int,Int)]): Unit =
+  protected[model] def UpdateMapDataII(mapData : Array[Array[Int]], knownCityTiles : scala.collection.mutable.Set[(Int,Int)]): Unit =
     // define  a flag to terminate the while loop when tile is added
     var tileAdded : Boolean = false
     // define a flag to terminate the loop once there is no more tile to add
@@ -339,7 +339,7 @@ object BiomeMap:
             mapRegion(newX)(newY) = 3
             // add the city tile to the set
             knownCityTiles.add((newX, newY))
-            println(f"City has added tile : $newX, $newY") // for debug purposes
+            //println(f"City has added tile : $newX, $newY") // for debug purposes
             // update the flags to terminate the loop
             tiletoAdd -= 1
             tileAdded = true
@@ -366,11 +366,11 @@ object BiomeMap:
   private def GetDirection( setOfDirections: scala.collection.mutable.Queue[(Int,Int)]): (Int,Int) =
     // takes in direction sequence at the parameter
     // removes first element
-    println(setOfDirections) // debug purposes
+    //println(setOfDirections) // debug purposes
     val pointedDirection : (Int,Int)= setOfDirections.dequeue()
     // adds it back to the end of the queue
     setOfDirections.enqueue(pointedDirection)
-    println(setOfDirections) // debug purposes
+    //println(setOfDirections) // debug purposes
     // returns the pointedDirection
     pointedDirection
   end GetDirection

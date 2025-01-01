@@ -1,6 +1,3 @@
-// main entry point of the program
-// initiates the app
-
 import scalafx.application.{JFXApp3, Platform}
 import scalafx.scene.Scene
 import model.BiomeMap
@@ -77,7 +74,6 @@ object main extends JFXApp3:
       // refresh the BiomeMap
       ()  => (BiomeMap.loadBiomeMap)
     )
-    
     // assign the scroll values
     
     BiomeMap.gameMap.vvalue = vPointer
