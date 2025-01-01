@@ -28,7 +28,7 @@ object Population:
     val cityTiles = BiomeMap.cityTiles
     //println(f"Population is now at $pop_now")
     //println(f"City tiles now at $cityTiles")
-    BiomeMap.UpdateMapData(mapData = BiomeMap.mapRegion, knownCityTiles = BiomeMap.cityTiles)
+    BiomeMap.UpdateMapDataII(mapData = BiomeMap.mapRegion, knownCityTiles = BiomeMap.cityTiles)
   end GrowPopulation
   
   // def a growth function for each city

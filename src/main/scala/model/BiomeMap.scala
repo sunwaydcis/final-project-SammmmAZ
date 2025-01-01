@@ -5,7 +5,7 @@ import scalafx.scene.Scene
 import scalafx.scene.control.ScrollPane
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.Pane
-
+import scala.collection.mutable.Queue
 import scala.util.{Success, Failure}
 import scala.concurrent.*
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -85,7 +85,7 @@ object BiomeMap:
     // and the specific tile has not been visited, by checking the !visited(x)(y)
     // if the tile is valid, and has not been visited
     // and has not been modified, as mapRegions(x)(y) == 1 -> Plains tile
-    x >= 0 && y >= 0 && x < mapHeight && y < mapWidth && !visited(x)(y) && mapRegions(x)(y) == 1
+    x >= 0 && y >= 0 && x <= mapHeight - 1 && y <= mapWidth -1  && !visited(x)(y) && mapRegions(x)(y) == 1
 
   private def randomFloodFill(startX: Int, startY: Int, biomeType: Int, maxSize: Int, visited: Array[Array[Boolean]], mapRegions: Array[Array[Int]]): Unit =
     // copies the logic of a floodfill algorithm to
@@ -309,23 +309,49 @@ object BiomeMap:
   // define a function that updates the map data structure
   // only update one tile
   def UpdateMapDataII(mapData : Array[Array[Int]], knownCityTiles : scala.collection.mutable.Set[(Int,Int)]): Unit =
-    // obtain a direction vector from a helper function
+    // define  a flag to terminate the while loop when tile is added
+    var tileAdded : Boolean = false
+    // define a flag to terminate the loop once there is no more tile to add
+    var tiletoAdd : Int = 1
 
-    // call get next tile to expand direction function
+    while !tileAdded do
+      // get the next tile direction
+      val nextTileVector : (Int,Int) = GetDirection(directions)
+      val dx : Int = nextTileVector(0)
+      val dy : Int = nextTileVector(1)
 
-    // check if the tile is valid
-    // if tile is valid, update the mapData array
-    
-    // boiler code to remove later
+      while tiletoAdd != 0 do
+        for ((x,y)<- knownCityTiles  if !tileAdded && tiletoAdd!= 0) 
+          // get coordinate of city tile
+          val x_coordinate : Int = x
+          val y_coordinate : Int = y
+          // get coordinate of next city tile
+          val nextX : Int = x + dx
+          val nextY : Int = y + dy
 
-    var a : Int = 1
-    var b : Int = 2
+          // get coordinate of adjacent tile to the current city tile in the direction of the current vector
+          val newX : Int =  x_coordinate + dx
+          val newY : Int = y_coordinate + dy
 
-    a +b
+          // check if the tile is valid with IsValid function
+          if newX > 0 && newX < mapWidth - 1 && newY > 0 && newY < mapHeight - 1 && mapRegion(newX)(newY) == 1 then
+            // add the city tile
+            mapRegion(newX)(newY) = 3
+            // add the city tile to the set
+            knownCityTiles.add((newX, newY))
+            println(f"City has added tile : $newX, $newY") // for debug purposes
+            // update the flags to terminate the loop
+            tiletoAdd -= 1
+            tileAdded = true
+          end if
+        end for
+      end while
+    end while
   end UpdateMapDataII
 
+
   // direction data:
-  private var directions : scala.collection.mutable.Queue[Set[(Int,Int)]] = Queue(
+  private var directions : scala.collection.mutable.Queue[(Int,Int)] = Queue(
     (-1, 0), // North
     (1, 0), // South
     (0, -1), // West
@@ -335,20 +361,20 @@ object BiomeMap:
     (1, -1), // South-West
     (1, 1) // South-East
   )
-  
+
   // defined helper function to parse through the directions available
-  private def GetDirection( setOfDirections: scala.collection.mutable.Queue[Set[(Int,Int)]]): Set[(Int,Int)] =
+  private def GetDirection( setOfDirections: scala.collection.mutable.Queue[(Int,Int)]): (Int,Int) =
     // takes in direction sequence at the parameter
     // removes first element
     println(setOfDirections) // debug purposes
-    val pointedDirection : Set[(Int,Int)] = setOfDirections.dequeue()
+    val pointedDirection : (Int,Int)= setOfDirections.dequeue()
     // adds it back to the end of the queue
     setOfDirections.enqueue(pointedDirection)
     println(setOfDirections) // debug purposes
     // returns the pointedDirection
     pointedDirection
   end GetDirection
-  
+
   // define wrapper functions to wrap updateMapView as runnable
   def RunnableUpdateMapView(): Runnable =
     new Runnable {
@@ -362,5 +388,11 @@ object BiomeMap:
   def RunnableUpdateMapData(): Runnable =
     () => UpdateMapData(mapData = this.mapRegion, knownCityTiles = cityTiles)
   end RunnableUpdateMapData
+
+  // define wrapper function to wrap the updateMapDatastructure function II
+  def RunnableUpdateMapDataII(): Runnable =
+    () => UpdateMapDataII(mapData = this.mapRegion, knownCityTiles = cityTiles)
+  end RunnableUpdateMapDataII
+
 
 
