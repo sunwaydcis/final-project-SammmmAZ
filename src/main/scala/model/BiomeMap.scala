@@ -66,9 +66,35 @@ object BiomeMap:
   val waterTile: Image = new Image(getClass.getResource("/image/tiles/waterTile.png").toExternalForm)
   val mountainTile: Image = new Image(getClass.getResource("/image/tiles/mountainFloorTile.png").toExternalForm)
   // new city tile
-  val cityTile : Image = new Image(getClass.getResource("/image/tiles/cityTile.png").toExternalForm)
+  //val cityTile : Image = new Image(getClass.getResource("/image/tiles/cityTile.png").toExternalForm)
+  val cityTile : Image = new Image(getClass.getResource("/image/tiles/city/CT1_urban.jpg").toExternalForm)
 
 
+  // added new texture packs for city's
+  
+  // for city A
+  // numbered 3
+  val city_set_1a : Image = new Image(getClass.getResource("/image/tiles/city/CT1_urban.jpg").toExternalForm)
+  // numbered 4
+  val city_set_1b : Image = new Image(getClass.getResource("/image/tiles/city/CT1_suburban.jpg").toExternalForm)
+  // numbered 5
+  val city_set_1c : Image = new Image(getClass.getResource("/image/tiles/city/CT1_rural.jpg").toExternalForm)
+  
+  // for city B
+  // numbered 6
+  val city_set_2a : Image = new Image(getClass.getResource("/image/tiles/city/CT2_Urban.png").toExternalForm)
+  // numbered 7
+  val city_set_2b : Image = new Image(getClass.getResource("/image/tiles/city/CT2_suburban.png").toExternalForm)
+  // numbered 8
+  val city_set_2c : Image = new Image(getClass.getResource("/image/tiles/city/CT2_rural.png").toExternalForm)
+  
+  // for city C
+  // numbered 9
+  val city_set_3a : Image = new Image(getClass.getResource("/image/tiles/city/CT3_Urban.jpg").toExternalForm)
+  // numbered 10
+  val city_set_3b : Image = new Image(getClass.getResource("/image/tiles/city/CT3_Suburban.png").toExternalForm)
+  // numbered 11
+  val city_set_3c : Image = new Image(getClass.getResource("/image/tiles/city/CT3_Rural.png").toExternalForm)
   // define data structure that will update the map
   val mapRegion: Array[Array[Int]] = Array.fill(mapHeight, mapWidth)(1)
 
