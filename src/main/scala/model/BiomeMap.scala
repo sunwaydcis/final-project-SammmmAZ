@@ -111,7 +111,12 @@ object BiomeMap:
     // and the specific tile has not been visited, by checking the !visited(x)(y)
     // if the tile is valid, and has not been visited
     // and has not been modified, as mapRegions(x)(y) == 1 -> Plains tile
-    x >= 0 && y >= 0 && x <= mapHeight - 1 && y <= mapWidth -1  && !visited(x)(y) && mapRegions(x)(y) == 1
+    val condition_1 : Boolean = ((50 < x && x <=100) && (50 < y && y <= 100))
+    val condition_2 : Boolean = (mapHeight - 100 < x && x <= mapHeight - 50) && (mapWidth - 100 < y && y <= mapWidth - 50)
+    val condition_3 : Boolean = (mapHeight - 100 < x  && x <= mapHeight - 50) && (50 < y && y <= 100)
+    val condition_4 : Boolean = (50 < x && x <= 100) && (mapWidth - 100 < y && y <= mapWidth - 50)
+    // put conditions
+    x >= 0 && y >= 0 && x <= mapHeight - 1 && y <= mapWidth -1  && !visited(x)(y) && mapRegions(x)(y) == 1 && !condition_1 && !condition_2 && !condition_3 && !condition_4
 
   private def randomFloodFill(startX: Int, startY: Int, biomeType: Int, maxSize: Int, visited: Array[Array[Boolean]], mapRegions: Array[Array[Int]]): Unit =
     // copies the logic of a floodfill algorithm to
@@ -119,7 +124,7 @@ object BiomeMap:
 
     // define directions to add biomes,
     // a point selected, will change or convert blocks up, down, left and right of it to a similar biome
-    val directions = List((0, 1), (1, 0), (0, -1), (-1, 0))
+    val directions: List[(Int, Int)] = List((0, 1), (1, 0), (0, -1), (-1, 0))
 
     // define a queue
     // from where to start and change the tiles according to the biome
