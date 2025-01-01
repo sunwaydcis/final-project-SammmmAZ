@@ -116,7 +116,7 @@ object BiomeMap:
           queue.enqueue((cx + dx, cy + dy))
         }
 
-  
+
   //def BiomeMapGenerator : Unit
   def GenerateBiomeMap( mapDataArray : Array[Array[Int]]): Unit =
     // Get number of total tiles:
@@ -236,11 +236,11 @@ object BiomeMap:
   // define a function to update the BiomeMap Control view
   private def UpdateMapView() : Unit =
     // returns the ScrollPane view with updated
-    
+
     // record original hVal and vVal to make sure scroll pane stays at same position
     val hVal: Double = this.gameMap.hvalue.toDouble
     val vVal : Double = this.gameMap.vvalue.toDouble
-    
+
     val updatedScrollPane = new ScrollPane:
       content = new Pane:
         // goes through the map
@@ -264,7 +264,7 @@ object BiomeMap:
     this.gameMap.vvalue = vVal
     // debugger
     Platform.runLater(() => updatedScrollPane.requestLayout())
-    println("BiomeMap update map view has been invoked")
+    //println("BiomeMap update map view has been invoked")
   end UpdateMapView
 
   // define a new function to update the map data structure
@@ -297,27 +297,70 @@ object BiomeMap:
           mapRegion(newX)( newY) = 3
           // add the new set of coordinate to CityTiles
           cityTiles.add((newX, newY))
-          println(f"$newX, $newY has been added to city tiles")
+          //println(f"$newX, $newY has been added to city tiles")
           // change it to true to update the city once
           isCurrentCityUpdated = true
         end if
       end for
     end for
   end UpdateMapData
+
+
+  // define a function that updates the map data structure
+  // only update one tile
+  def UpdateMapDataII(mapData : Array[Array[Int]], knownCityTiles : scala.collection.mutable.Set[(Int,Int)]): Unit =
+    // obtain a direction vector from a helper function
+
+    // call get next tile to expand direction function
+
+    // check if the tile is valid
+    // if tile is valid, update the mapData array
+    
+    // boiler code to remove later
+
+    var a : Int = 1
+    var b : Int = 2
+
+    a +b
+  end UpdateMapDataII
+
+  // direction data:
+  private var directions : scala.collection.mutable.Queue[Set[(Int,Int)]] = Queue(
+    (-1, 0), // North
+    (1, 0), // South
+    (0, -1), // West
+    (0, 1), // East
+    (-1, -1), // North-West
+    (-1, 1), // North-East
+    (1, -1), // South-West
+    (1, 1) // South-East
+  )
+  
+  // defined helper function to parse through the directions available
+  private def GetDirection( setOfDirections: scala.collection.mutable.Queue[Set[(Int,Int)]]): Set[(Int,Int)] =
+    // takes in direction sequence at the parameter
+    // removes first element
+    println(setOfDirections) // debug purposes
+    val pointedDirection : Set[(Int,Int)] = setOfDirections.dequeue()
+    // adds it back to the end of the queue
+    setOfDirections.enqueue(pointedDirection)
+    println(setOfDirections) // debug purposes
+    // returns the pointedDirection
+    pointedDirection
+  end GetDirection
   
   // define wrapper functions to wrap updateMapView as runnable
   def RunnableUpdateMapView(): Runnable =
     new Runnable {
       override def run(): Unit =
         UpdateMapView()
-        println("RunnableUpdateMapView has been executed")
+        //println("RunnableUpdateMapView has been executed")
     }
   end RunnableUpdateMapView
-  
+
   // define wrapper function tp wrap update map data structure
   def RunnableUpdateMapData(): Runnable =
     () => UpdateMapData(mapData = this.mapRegion, knownCityTiles = cityTiles)
   end RunnableUpdateMapData
-  
-  
-  
+
+

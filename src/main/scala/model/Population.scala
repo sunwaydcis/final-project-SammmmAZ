@@ -23,10 +23,11 @@ object Population:
   // define a growth function
   def GrowPopulation(counter : Int): Unit =
     this.population_total += 5000
+    this.growthCounter += 1
     val pop_now = this.population_total
     val cityTiles = BiomeMap.cityTiles
-    println(f"Population is now at $pop_now")
-    println(f"City tiles now at $cityTiles")
+    //println(f"Population is now at $pop_now")
+    //println(f"City tiles now at $cityTiles")
     BiomeMap.UpdateMapData(mapData = BiomeMap.mapRegion, knownCityTiles = BiomeMap.cityTiles)
   end GrowPopulation
   

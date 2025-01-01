@@ -42,7 +42,7 @@ object main extends JFXApp3:
 
     // sets the stage
     primaryStage = new JFXApp3.PrimaryStage:
-      title = "Civilization Simulation"
+      title = "Civilization Simulation - Alpha Testing"
       scene = mapScene
       icons.add(new Image(getClass.getResource("/image/tiles/plainsTile.png").toExternalForm))
       maximized = true
@@ -63,7 +63,7 @@ object main extends JFXApp3:
       GrowPopulation(Population.growthCounter)
       // call the Platform Runlater
       Platform.runLater(BiomeMap.RunnableUpdateMapView())
-      println("Map has been updated")
+      println(f"Map updated times: ${Population.growthCounter}")
       RefreshStage()
       ScheduleRandomMapUpdate()
     }
@@ -86,5 +86,5 @@ object main extends JFXApp3:
       // reloads the BiomeMap Map UI View
       mapScene.root = BiomeMap.loadBiomeMap
     )
-    println("Stage has been refreshed")
+    //println("Stage has been refreshed")
   end RefreshStage
