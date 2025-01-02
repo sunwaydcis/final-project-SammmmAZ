@@ -425,6 +425,7 @@ object BiomeMap:
 
 
   // define wrapper functions to wrap updateMapView as runnable
+  // to be made public, accessed via mainApp.scala
   def RunnableUpdateMapView(): Runnable =
     new Runnable {
       override def run(): Unit =
@@ -434,6 +435,7 @@ object BiomeMap:
   end RunnableUpdateMapView
 
   // define wrapper function tp wrap update map data structure
+  // to be made private
   def RunnableUpdateMapData(): Runnable =
     () => UpdateMapData(mapData = this.mapRegion, knownCityTiles = cityTiles)
   end RunnableUpdateMapData
@@ -442,6 +444,16 @@ object BiomeMap:
   def RunnableUpdateMapDataII(): Runnable =
     () => UpdateMapDataII(mapData = this.mapRegion, knownCityTiles = cityTiles)
   end RunnableUpdateMapDataII
-
+  
+  // define a function to add a city to the BiomeMap
+  def AddMapToCity(): Unit =
+    // initiate a city object
+    val city = new City()
+    // add city to the map
+    city.AddCityToMap(city.generationPoint)
+    // update BiomeMap member of CityList
+    this.ListOfCity.append(city) // add generated city to list of city
+  end AddMapToCity
+  
 
 

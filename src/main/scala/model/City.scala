@@ -16,10 +16,10 @@ object City:
   // to declare static variables for all class
 
   // tile related data
-  private val max_tiles: Int = 200
-  private val max_urban_tiles : Int= 50 // should be random between 30 - 60
-  private val max_suburban_tiles : Int= 50 // should be capped at val where suburban tile and urban tile sum up to 100
-  private val max_rural_tiles : Int= 100
+  private val max_tiles: Int = max_urban_tiles + max_suburban_tiles + max_rural_tiles
+  private val max_urban_tiles : Int= 300 // should be random between 30 - 60
+  private val max_suburban_tiles : Int= 750 // should be capped at val where suburban tile and urban tile sum up to 100
+  private val max_rural_tiles : Int= 1850
 
   // population related data
   private val max_population : Int = 300000 // max per city should be between 300,000 and 400,000
@@ -101,7 +101,7 @@ object City:
       (x: Int, y : Int, maxY : Int, maxX : Int) => ( x>= maxX -100 && x <= maxX -50) && (y >= 50 && y <= 100),
       (x: Int, y : Int, maxY : Int, maxX : Int) => ( x>= maxX -100 && x <= maxX -50) && ( y>= maxY -100 && y <= maxY -50)
     )
-  // the previous filer : cityCoordsX >80 && cityCoordsX < mapHeight - 80 && cityCoordsY > 80 && cityCoordsY < mapWidth -80 && mapRegion(cityCoordsX)(cityCoordsY) == 1  
+  // the previous filer : cityCoordsX >80 && cityCoordsX < mapHeight - 80 && cityCoordsY > 80 && cityCoordsY < mapWidth -80 && mapRegion(cityCoordsX)(cityCoordsY) == 1
   // a city will only be generated in a fixed generation point, random between the 4 spawn centers
   protected[model] def GetGenerationPoint : (Int, Int) =
     // get the filter
@@ -114,7 +114,7 @@ object City:
     // declare flag to stop the loop once a generation point has been found
     var hasGeneratedPoints : Boolean = false
     var points : (Int,Int) = (0,0)
-    
+
     while !hasGeneratedPoints do
       // define potential points for city
       val point_x : Int = Random.between(1, BiomeMap.mapHeight)
@@ -137,7 +137,7 @@ end City
 
 class City():
   // to hold all background process list of each city
-  var backgroundProcesslist : List[Runnable] = 
+  var backgroundProcesslist : List[Runnable] =
     List(
       () => ExpandCity()
     )
@@ -164,31 +164,32 @@ class City():
     BiomeMap.mapRegion(coordsX)(coordsY) = texturePacks(0)
     // first tile of a city is always an urban tile
     this.urbanTileCounter += 1
-    println(s"The city has been added at $coordsX, $coordsY")
+    //println(s"The city has been added at $coordsX, $coordsY")
   end AddCityToMap
 
   // function to expand city
   protected[model] def ExpandCity(): Unit =
+    // potential to modify:: with isExpandable? --> Stops this function from executing once total tiles has reach max amount of tiles
     // the function always update only one tile, by changing 1 on map array data to one of city's texture tile
     // step 1: define a flag for to initiate the loop
     var cityExpandedFlag : Boolean = false
-    var tileToAdd: Int = 1
-    // step 2 : initiate a loop 
+    var tileToAdd: Int = 5
+    // step 2 : initiate a loop
     while !cityExpandedFlag do
       // obtain the next direction from the direction vector collection
       val pointedDirection: (Int, Int) = City.directions.dequeue()
       // move the direction used to the back
       City.directions.enqueue(pointedDirection)
-      println(pointedDirection)
+      //println(pointedDirection)
       // unpack the direction into
       // 1. dx - changes in x
       val dx : Int = pointedDirection(0)
       // 2. dy - changes in y
       val dy : Int = pointedDirection(1)
-      
+
       // initiate another loop
       while tileToAdd != 0 do
-        for ((x,y) <- this.cityTiles if !cityExpandedFlag && tileToAdd!=0 ) 
+        for ((x,y) <- this.cityTiles if !cityExpandedFlag && tileToAdd!=0 )
           // calculate the next to-be tile in the city
           val nextX : Int = x + dx
           val nextY : Int = y + dy
@@ -196,7 +197,7 @@ class City():
           // filter
           if nextX > 0 && nextX < BiomeMap.mapHeight - 1 && nextY > 0 && nextY < BiomeMap.mapWidth - 1 && BiomeMap.mapRegion(nextX)(nextY) == 1 then
             // check if the urban city tile has reached is limit
-            
+
             // add new coordinates to the this.cityTiles
             if urbanTileCounter != max_urban_tiles then
               BiomeMap.mapRegion(nextX)(nextY) = this.texturePacks(0)
@@ -204,10 +205,12 @@ class City():
               urbanTileCounter += 1
               this.cityTiles.add((nextX, nextY))
             //  println(f"Urban tile for this city is $urbanTileCounter") // for debug purposes
-              // set the expanded flag to true
-              cityExpandedFlag = true
               // deduct the tile to add counter
               tileToAdd -= 1
+              if tileToAdd == 0 then
+                cityExpandedFlag = true
+              end if
+              
             else if suburbanTileCounter !=  max_suburban_tiles then
               BiomeMap.mapRegion(nextX)(nextY) = this.texturePacks(1)
             //  println(f"subsurban tile added to $nextX,$nextY") // for debug purposes
@@ -215,34 +218,49 @@ class City():
               this.cityTiles.add((nextX, nextY))
             //  println(f"Suburban tile for this city is $suburbanTileCounter") // for debug purposes
               // set the expanded flag to true
-              cityExpandedFlag = true
               // deduct the tile to add counter
               tileToAdd -= 1
+              if tileToAdd == 0 then
+                cityExpandedFlag = true
+              end if
+              
+
             else if ruralTileCounter != max_rural_tiles then
               BiomeMap.mapRegion(nextX)(nextY) = this.texturePacks(2)
             //  println(f"rural tile assed to $nextX,$nextY")
               this.ruralTileCounter += 1
               this.cityTiles.add((nextX, nextY))
-            //  println(f"rural tile for this city is $ruralTileCounter") // for debug 
+            //  println(f"rural tile for this city is $ruralTileCounter") // for debug
               // set the expanded flag to true
-              cityExpandedFlag = true
               // deduct the tile to add counter
               tileToAdd -= 1
+              if tileToAdd == 0 then
+                cityExpandedFlag = true
+              end if
+              
+
             end if
           end if
         end for
       end while
     end while
   end ExpandCity
-  
+
   // function to add specific buildings to the city
   // def AddHospital(): Unit
   //     add certain affects: use stronger growth function
-  //     work over the algorithm
-  
+  //                        : work over the algorithm
+  //                        : consumes more money to manage
+
   // def AddCommercialCenter(): Unit
   //     add certain effects: Increase money production rate
+  //                        : Decrease cost to buy buildings and food
+
+  // def AddUniversity(): Unit
+  //     add effect : Increase money production rate
+  //                : Decrease birth rate/ lower growth function return
   
   // def AddFarm(): Unit
-  //     add effect : city now produces food 
+  //     add effect : city now produces food
+  //                : price to buy food decreases
 end City
