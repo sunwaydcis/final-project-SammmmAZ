@@ -151,6 +151,23 @@ class City():
   // put a counter on the urban tiles
   var urbanTileCounter : Int = 0
   // put a counter on the suburban tiles
+
+  // put a buffer list for urban, suburban, rural tile points
+  protected[model] var urbanTilePoints : scala.collection.mutable.ListBuffer[(Int,Int)] = ListBuffer()
+  protected[model] var suburbanTilePoints : scala.collection.mutable.ListBuffer[(Int,Int)] = ListBuffer()
+  protected[model] var ruralTilePoints: scala.collection.mutable.ListBuffer[(Int, Int)] = ListBuffer()
+
+
+  // put a buildings counter
+  var hospitalCount : Int = 0
+  var farmCount : Int = 0
+  var universityCount : Int = 0
+  var comCenterCount : Int = 0
+  var quarryCount : Int = 0
+  var waterStatCount : Int = 0
+  var electrStatCount : Int = 0
+  
+  
   var suburbanTileCounter : Int = 0
   // put a counter on the rural tiles
   var ruralTileCounter : Int = 0
@@ -246,6 +263,10 @@ class City():
     end while
   end ExpandCity
 
+  // implement in city class 
+  // logic of checking and managing buildings belong to the city
+  
+  
   // function to add specific buildings to the city
   // def AddHospital(): Unit
   //     add certain affects: use stronger growth function

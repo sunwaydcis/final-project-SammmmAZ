@@ -6,6 +6,8 @@ object Population:
   // to self update 
   val isDynamic : Boolean = true
   
+  // total funds by Population
+  var totalMoney : Double = 20000.00
   // crucial population data
   var population_total : Int = 2500
   // to check for need to expand/ add new tiles to the populations' city

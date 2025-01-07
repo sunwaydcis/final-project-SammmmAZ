@@ -8,20 +8,18 @@ import scala.util.Random
 object Hospital:
   val name : String = "Hospital"
   // all Hospitals share same Image
-  def GenerateSpawnPoints(listOfPoints : Set[(Int,Int)], uTiles : Set[(Int,Int)], sTiles: Set[(Int,Int)], rTiles : Set[(Int,Int)] ): (Int,Int)=
-    // Hospitals have a higher tendency to generate in urban areas
-    // ensure Hospital generation prioritizes urban tile swapping
-
-    // define flag to state point for hospital generation is not found
-    var isSpawnSet : Boolean = false
-
-    while !isSpawnSet do
-      // acquire random point
-      val randomPoints : (Int,Int) = listOfPoints.toSeq(Random.nextInt(listOfPoints.size))
-      // checks if point is in urban tiles
-      if randomPoints.subsetOf(uTiles) then // add more logic here
-
-
+//  def GenerateSpawnPoints(listOfPoints : Set[(Int,Int)], uTiles : Set[(Int,Int)], sTiles: Set[(Int,Int)], rTiles : Set[(Int,Int)] ): (Int,Int)=
+//    // Hospitals have a higher tendency to generate in urban areas
+//    // ensure Hospital generation prioritizes urban tile swapping
+//
+//    // define flag to state point for hospital generation is not found
+//    var isSpawnSet : Boolean = false
+//
+//    while !isSpawnSet do
+//      // acquire random point
+//      val randomPoints : (Int,Int) = listOfPoints.toSeq(Random.nextInt(listOfPoints.size))
+//      // checks if point is in urban tiles
+//      if randomPoints.subsetOf(uTiles) then // add more logic here
 
 end Hospital
 
@@ -38,11 +36,11 @@ class Hospital extends Building(
   price = 200 // price to build a hospital
 ):
   // add other Building Requirement:
-  val requires : List[B <: Building] = List()
-  val coordinate : Set[(Int,Int)]
+  //val requires : List[B <: Building] = List()
+  //val coordinate : Set[(Int,Int)] = 
 
 
-  def this(spawn_coords : Set[(Int,Int)])=
+  //def this(spawn_coords : Set[(Int,Int)])=
 
 end Hospital
 

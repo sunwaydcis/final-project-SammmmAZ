@@ -1,8 +1,6 @@
 package model
 
 import scalafx.scene.image.Image
-import model.City
-import model.Hospital.mapLevelToProfit
 
 import scala.collection.immutable.List
 import scala.collection.mutable.ListBuffer
@@ -45,8 +43,6 @@ object Hospital:
   val startLevel : Int = 1
   // counts all the hospitals in all cities
   var totalHospital : Int = 0
-
-  val mapLevelToProfit : Map[Int,Int] = Map(1 -> 28, 2 -> 53, 3 -> 78, 4 -> 125)
 end Hospital
 
 class Hospital(pointX : Int, pointY : Int) extends Building(
@@ -62,9 +58,9 @@ class Hospital(pointX : Int, pointY : Int) extends Building(
 ):
   // define a point / coordinate data upon constructor called
   val coordinate : (Int,Int) = (pointX,pointY)
-  // define money generation rate
-  // tied to level property of Hospital
-  var moneyProductionRate : Int = mapLevelToProfit(this.level)
+  // define requires
+  // The which contains the Building
+  // val requiresBuilding : List[Building <: T] = List()
 
   //  Implement IsBuildable Method
   override def IsBuildable( funds : Double, city :City): Boolean =
@@ -76,7 +72,6 @@ class Hospital(pointX : Int, pointY : Int) extends Building(
 
   override def Build(loc : Set[(Int,Int)], city: City): Unit =
     // check for city's current method
-    // logic of adding Hospital should be implemented in City Class
     val current_city : City = city
     val urban_tiles : ListBuffer[(Int,Int)] = current_city.urbanTilePoints
     val suburban_tiles : ListBuffer[(Int,Int)] = current_city.suburbanTilePoints
@@ -108,16 +103,7 @@ class Hospital(pointX : Int, pointY : Int) extends Building(
   end Build
 
   // define a val for total money generated
-  override def CalculateMoneyGenerationRate(): Double =
-    var profit : Double = 200.00
-  end CalculateMoneyGenerationRate
-
-  override def Upgrade(): Unit =
-    // define
-
-
-// override def CalculateMoneyGenerationRate(): Double
-
+  // override def CalculateMoneyGenerationRate(): Double =
 
 
 
