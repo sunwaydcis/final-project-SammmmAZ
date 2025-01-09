@@ -2,21 +2,20 @@ package model
 
 import scalafx.scene.image.Image
 import model.City
-import model.Hospital.mapLevelToProfit
+import model.CommercialCenter.{cc_counter, name}
+import model.Hospital.{hospital_name, mapLevelToProfit}
 
 import scala.collection.immutable.List
 import scala.collection.mutable.ListBuffer
 import scala.language.postfixOps
 
-abstract class Building(tileData : Image,price : Int, built : Boolean, spawned : Boolean, profitable : Boolean, consumes : Boolean, init_level : Int, levels_available : List[Int], upgrade_prices : List[Double]):
+abstract class Building(tileData : Image,price : Int, profitable : Boolean, consumes : Boolean, init_level : Int, levels_available : List[Int], upgrade_prices : List[Double]):
   // define unimplemented methods that will be implemented in Building class
   // building Image data to be implemented in building class
-  val buildingTileImage : Image
+  val buildingTileImage : Image 
   // building cost
   var buildingPrice : Int = price
   // some structures spawn naturally in cities
-  protected[model] val isNatural : Boolean = spawned
-  protected[model] val isBuilt: Boolean = built
   protected[model] val produceMoney: Boolean = profitable // some structures produce money
   protected[model] val isConsumeResource : Boolean = consumes
   // to store data on Building level
@@ -26,21 +25,16 @@ abstract class Building(tileData : Image,price : Int, built : Boolean, spawned :
   // to store information on Price to Level up the building
   protected[model] val upgradePrice: List[Double] = upgrade_prices
 
-  // check game state & map state, if conditions satisfy, returns buildable
-  def IsBuildable(funds : Double, city :City): Boolean
-  // method to add Building to the Game
-  def Build(loc : Set[(Int,Int)], city: City): Unit
-  // method to level up the building
   def Upgrade(): Unit
-  // special conditions that affect building money generation rate
-  def CalculateMoneyGenerationRate(): Double
 end Building
 
 
 
 // define hospital class for Buildings
+
+// Hospital companion object for static members of all instances of Class Hospital objects
 object Hospital:
-  val name : String = "Hospital"
+  var hospital_name : String = f"Hospital_$totalHospital"
   val hospitalTile : Image = new Image(getClass.getResource("/image/tiles/cityTile.png").toExternalForm)
   val startLevel : Int = 1
   // counts all the hospitals in all cities
@@ -52,8 +46,6 @@ end Hospital
 class Hospital(pointX : Int, pointY : Int) extends Building(
   tileData = Hospital.hospitalTile,  // all hospitals share the same Image data
   price = 200,  // this is the initial price to build
-  built = true,
-  spawned = false,
   profitable = true,
   consumes = true,
   init_level = Hospital.startLevel,
@@ -65,58 +57,66 @@ class Hospital(pointX : Int, pointY : Int) extends Building(
   // define money generation rate
   // tied to level property of Hospital
   var moneyProductionRate : Int = mapLevelToProfit(this.level)
+  // everytime Hospital constructor is called, add one to the
+  Hospital.totalHospital += 1
+  val id : String = hospital_name
 
-  //  Implement IsBuildable Method
-  override def IsBuildable( funds : Double, city :City): Boolean =
-    // check if funds is sufficient to build a hospital
-    // check if city has less than 5 hospitals
-    // checks static member val, totalHospital has less than 20 hospital
-    return (funds >= this.buildingPrice) && (Hospital.totalHospital < 20) // implement city checker for hospital logic
-  end IsBuildable
+  override def Upgrade(money : Double): Unit =
+    // input takes in total money
+    // takes in current level
+    val current_level : Int = this.level
+    val max_level : Int = this.availableLevel.tail
+    // checks if current level is max level, if not then continue
+    if !(current_level == max_level) then
+      // logic to subtract money from total_money
+      money -= this.upgradePrice[current_level -1] // from money required
+      this.level += 1 // increase level count
+    else
+      println("Max level reached, cannot upgrade")
+    end if
+  end Upgrade
+end Hospital
 
-  override def Build(loc : Set[(Int,Int)], city: City): Unit =
-    // check for city's current method
-    // logic of adding Hospital should be implemented in City Class
-    val current_city : City = city
-    val urban_tiles : ListBuffer[(Int,Int)] = current_city.urbanTilePoints
-    val suburban_tiles : ListBuffer[(Int,Int)] = current_city.suburbanTilePoints
-    val rural_tiles : ListBuffer[(Int,Int)] = current_city.ruralTilePoints
-    // compile a logic to prefer to build in urban more than suburban and rural
-    for ((x,y) <- loc)
-      // iterate through each points
-      // if x & y is a good tile
-      // and in an urban area
-      (x,y) match
-        // for the first hospital
-        case (x,y) if current_city.hospitalCount == 0 && current_city.hospitalCount < 4 && urban_tiles.length >= 100 && IsBuildable(funds = Population.totalMoney, city = current_city) =>
-          Some(Hospital(pointX = x, pointY = y))
-          // logic to add
-          // 1. remove (x,y) from urban tile/ suburban tile
-          // 2. add (x,y) to Building tiles of city object
-          // 3. deduct money from Population.total_money -->
-          // 4.
-          println(f"Hospital built at $x,$y")
-        // for the second hospital and third hospital
-        case (x,y) if suburban_tiles.contains((x,y)) &&  current_city.hospitalCount < 4 && suburban_tiles.length >= 200 && urban_tiles.length - 100 >= 200 && IsBuildable(funds = Population.totalMoney , city = current_city) =>
-          Some(Hospital(pointX = x, pointY = y))
-          println(f"Hospital built at $x,$y")
-        case (x,y) if rural_tiles.contains((x,y)) && current_city.hospitalCount < 4 && suburban_tiles.length - 200 >= 400 && rural_tiles.length >= 100 &&  IsBuildable(funds = Population.totalMoney , city = current_city) =>
-          Some(Hospital(pointX = x, pointY = y))
-          println("___")
+// define class for Commercial Center
 
-    end for
-  end Build
+// define companion object for commercial center
+object CommercialCenter:
+  val name : String = f"Commercial_Center_$cc_counter"
+  val commercialCenterTile : Image = new Image(getClass.getResource("/image/tiles/cityTile.png").toExternalForm)
+  val startLevel : Int = 1
+  // counts all commercial center in city
+  var cc_counter : Int = 0
+end CommercialCenter
 
-  // define a val for total money generated
-  override def CalculateMoneyGenerationRate(): Double =
-    var profit : Double = 200.00
-  end CalculateMoneyGenerationRate
+// define object member for objects of class Commercial center
+class CommercialCenter(pointX : Int, pointY : Int) extends Building(
+  tileData = CommercialCenter.commercialCenterTile,
+  price = 300,
+  profitable = true, 
+  consumes = true, 
+  init_level = CommercialCenter.startLevel, 
+  levels_available = List(1,2,3,4,5), 
+  upgrade_prices = List(400,900,1200,1600)
+):
+  cc_counter += 1
+  // method to identify the 
+  val id : String = CommercialCenter.name
+  // accepts from the constructor
+  val coordinate : (Int,Int) = (pointX , pointY)
 
   override def Upgrade(): Unit =
-    // define
+    var a: Int = 5
+    var b : Int = 10
+    a+ b
+    // place holder function for Upgrade
+  end Upgrade
+  
+end CommercialCenter
 
 
-// override def CalculateMoneyGenerationRate(): Double
+  
+
+
 
 
 
