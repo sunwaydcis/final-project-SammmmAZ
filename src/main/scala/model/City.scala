@@ -1,6 +1,6 @@
 package model
 
-import model.City.{GetGenerationPoint, RandomTextureAssigning, max_rural_tiles, max_suburban_tiles, max_urban_tiles}
+import model.City.{GetGenerationPoint, GrowthFunctionExp, GrowthFunctionReg, RandomTextureAssigning, max_rural_tiles, max_suburban_tiles, max_urban_tiles}
 import scalafx.scene.image.Image
 
 import scala.collection.mutable.Queue
@@ -10,6 +10,9 @@ import java.lang.Runnable
 import scala.collection.mutable.ListBuffer
 import scala.language.postfixOps
 import scala.util.Random
+
+// import building class data
+import model.Building
 
 // companion object city
 object City:
@@ -131,6 +134,18 @@ object City:
       end if
     points
   end GetGenerationPoint
+
+  private def GrowthFunctionReg(pop : Int) : Int =
+    // growth rate at constant : 0.03
+    // so 5000 +
+    pop + (pop * 0.03).toInt
+  end GrowthFunctionReg
+
+  private def GrowthFunctionExp(pop : Int, hosp_count : Int): Int =
+    // growth rate for cities with Hospitals
+    pop + (pop * 0.05).toInt + (hosp_count *(pop * 0.02).toInt)
+  end GrowthFunctionExp
+
 end City
 
 
@@ -141,6 +156,9 @@ class City():
     List(
       () => ExpandCity()
     )
+
+  // initiate local population
+  var local_population : Int = City.start_population
 
   val texturePacks : List[Int] = RandomTextureAssigning
   // will have fixed texture packs
@@ -156,21 +174,17 @@ class City():
   protected[model] var urbanTilePoints : scala.collection.mutable.ListBuffer[(Int,Int)] = ListBuffer()
   protected[model] var suburbanTilePoints : scala.collection.mutable.ListBuffer[(Int,Int)] = ListBuffer()
   protected[model] var ruralTilePoints: scala.collection.mutable.ListBuffer[(Int, Int)] = ListBuffer()
-
-
-  // put a buildings counter
-  var hospitalCount : Int = 0
-  var farmCount : Int = 0
-  var universityCount : Int = 0
-  var comCenterCount : Int = 0
-  var quarryCount : Int = 0
-  var waterStatCount : Int = 0
-  var electrStatCount : Int = 0
   
+  
+  var hospitalCount : Int = 0
   
   var suburbanTileCounter : Int = 0
   // put a counter on the rural tiles
   var ruralTileCounter : Int = 0
+
+  // define variable to mark city will grow or not
+  private var maxPopulationFlag : Boolean = false
+
   //  function to call edit or update BiomeMap Map Data
   protected[model] def AddCityToMap( point : (Int,Int)): Unit =
     // unpack tuple data
@@ -254,7 +268,6 @@ class City():
               if tileToAdd == 0 then
                 cityExpandedFlag = true
               end if
-              
 
             end if
           end if
@@ -263,10 +276,66 @@ class City():
     end while
   end ExpandCity
 
-  // implement in city class 
-  // logic of checking and managing buildings belong to the city
-  
-  
+  // define growth model function
+  protected[model] def CityPopulationGrowth(): Unit =
+    // check for conditions
+    if (this.local_population < City.max_population) && (!this.maxPopulationFlag) then // if population size smaller then max population limit & ~flag is true then proceed
+      hospitalCount match
+        case 0 => this.local_population = GrowthFunctionReg(this.local_population)
+        case x if 1 to 5 contains x => this.local_population = GrowthFunctionExp(this.local_population, x)
+        case x if x > 6 => println(f"Error, City has $x hospitals")
+      end match
+      else if this.local_population == City.max_population then
+        println("Max population has reached")
+        else
+          None
+    end if
+
+    // once a new population value has occurred
+    // do check to ensure local population doesnt exceed threshold
+    if this.local_population > City.max_population then
+      this.local_population = City.max_population
+      println("local population capped at 300000")
+      // for debug purposes
+      // set max population flag to mark city has reached max population
+      this.maxPopulationFlag = true
+    end if
+
+
+//  // implement a buildings list
+//  //private var buildingList : ListBuffer[A] = ListBuffer()
+//  // implement in city class 
+//  // logic of checking and managing buildings belong to the city
+//  private def hasBuilding(list : ListBuffer[A]): (Boolean, Boolean) =
+//    var water_station_flag : Boolean = false
+//    var electric_station_flag : Boolean = false
+//    for _ <- list do
+//        (x: WaterStation) => water_station_flag = true;
+//        (x: ElectricStation) => electric_station_flag = true;
+//        (x: Building) => null;
+//    end for
+//    (water_station_flag,electric_station_flag)
+//  end hasBuilding
+
+
+//  protected [model] def AddHospital[T](list : ListBuffer[T], money : Int): Unit =
+//    // pre-conditions
+//    // 1. Has WaterStation
+//    // 2. Has Electric Station
+//    // 3. Has Money more than cost
+//    // 4. Hospital count not more than or equal to 5
+//
+//    val flags : (Boolean,Boolean) = hasBuilding(list = buildingList)
+//    if flags(0) && flags(1) && money >= Population.totalMoney && !(this.hospitalCount >= 5) then
+//      val seqOtiles : Seq[(Int,Int)] = Random.shuffle(this.cityTiles.toSeq)
+//      var points : (Int,Int) = seqOtiles.take(1).toSet.head
+//      val hosp: Hospital = Hospital(pointX = points(0), pointY = points(1))
+//      this.buildingList += hosp
+//      else
+//
+
+
+
   // function to add specific buildings to the city
   // def AddHospital(): Unit
   //     add certain affects: use stronger growth function

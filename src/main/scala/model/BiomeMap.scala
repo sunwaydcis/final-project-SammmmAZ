@@ -120,7 +120,14 @@ object BiomeMap:
       8 -> city_set_2c,
       9 -> city_set_3a,
       10 -> city_set_3b,
-      11 -> city_set_3c)
+      11 -> city_set_3c
+    // 12 -> Hospital,
+    // 13 -> Farm,
+    // 14 -> University,
+    // 15 -> CommercialCenter,
+    // 16 -> WaterStation,
+    // 17 -> ElectricStation
+    )
 
 
   private def IsValid(x: Int, y: Int, visited: Array[Array[Boolean]], mapRegions: Array[Array[Int]]): Boolean =

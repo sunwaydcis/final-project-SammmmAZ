@@ -58,3 +58,27 @@
   end Build
 
 
+----------------------------------
+
+package controller
+
+import javafx.fxml.FXML
+import javafx.scene.control.ScrollPane
+import model.BiomeMap
+
+class MapPaneController:
+
+  // Link the ScrollPane from FXML
+  @FXML private var mapScrollPane: ScrollPane = _
+
+  // Initialize method called automatically after FXML is loaded
+  @FXML def initialize(): Unit =
+    // Generate the map from BiomeMap model
+    val biomeMapScrollPane = BiomeMap.GenerateBiomeMap()
+
+    // Set the generated map as the content of the ScrollPane
+    mapScrollPane.setContent(biomeMapScrollPane.getContent)
+
+end MapPaneController
+
+

@@ -2,6 +2,8 @@ package model
 
 import model.BiomeMap
 
+import scala.collection.mutable.ListBuffer
+
 object Population:
   // to self update 
   val isDynamic : Boolean = true
@@ -13,11 +15,6 @@ object Population:
   // to check for need to expand/ add new tiles to the populations' city
   val population_threshold : Int = 3000
   
-  // can migrate:
-  var population_min_to_migrate : Int = 5000
-  // logic,
-  // the city or population must spread, thus a threshold to check if the
-  // population can send a new colonizing team to build new establishments
   // and start a new city else where
   var growthCounter : Int = 0
   
@@ -32,7 +29,15 @@ object Population:
     BiomeMap.UpdateMapDataIII()
   end GrowPopulation
   
+  
+  
   // def a growth function for each city
+  def GrowPopulationByCity(counter : Int): Unit =
+    // obtain list of city in Map
+    val cities : ListBuffer[City] = BiomeMap.ListOfCity
+    
+    for city <- cities do 
+      city.local_population =  
   
   // def PopulationGrowthPerCity(): Unit
   

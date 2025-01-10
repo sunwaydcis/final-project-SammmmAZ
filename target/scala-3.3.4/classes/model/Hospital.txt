@@ -1,47 +1,84 @@
-package model
+// class information for Buildings
 
-import scala.language.postfixOps
-import model.Building
-import scalafx.scene.image.Image
-import scala.util.Random
+// val members
+// val ImageData
+// val Point X
+// val Point Y
+// val Cost
+// var ProduceMoney
+// var ProductionRate
+// var level
+// var available_Levels
+// var upgrade_price
 
-object Hospital:
-  val name : String = "Hospital"
-  // all Hospitals share same Image
-//  def GenerateSpawnPoints(listOfPoints : Set[(Int,Int)], uTiles : Set[(Int,Int)], sTiles: Set[(Int,Int)], rTiles : Set[(Int,Int)] ): (Int,Int)=
-//    // Hospitals have a higher tendency to generate in urban areas
-//    // ensure Hospital generation prioritizes urban tile swapping
-//
-//    // define flag to state point for hospital generation is not found
-//    var isSpawnSet : Boolean = false
-//
-//    while !isSpawnSet do
-//      // acquire random point
-//      val randomPoints : (Int,Int) = listOfPoints.toSeq(Random.nextInt(listOfPoints.size))
-//      // checks if point is in urban tiles
-//      if randomPoints.subsetOf(uTiles) then // add more logic here
+// Logic to build a building
+// initiate a Building object
+// method to level up
+// method to consume
 
-end Hospital
+// Hospital Extends Buildings
 
+// load Building constructor
 
-class Hospital extends Building(
-  tileData = new Image(getClass.getResource("/image/tiles/cityTile.png").toExternalForm), // sets the hospital tile display data
-  built = true, // when a hospital is added to the map, it is likely true
-  spawned = false, // hospital can spawn naturally too, this is to check which hospitals spawn with city expansion, and which is built for score points
-  profitable = true, // some buildings dont produce money, hospital does
-  consumes = true, // hospital consumes some resources too
-  init_level = 1, // when Hospital is added, it is at level one
-  levels_available = List(1,2,3,4,5), // shows available hospital uprade levels
-  upgrade_prices = List(200.00, 450.99, 555.55, 750.00), // money needed to upgrade hospital
-  price = 200 // price to build a hospital
-):
-  // add other Building Requirement:
-  //val requires : List[B <: Building] = List()
-  //val coordinate : Set[(Int,Int)] = 
+// define static member
+// Image value = HospitalImage // passed to Image constructor
 
 
-  //def this(spawn_coords : Set[(Int,Int)])=
+  override def Build(loc : Set[(Int,Int)], city: City): Unit =
+    // check for city's current method
+    // logic of adding Hospital should be implemented in City Class
+    val current_city : City = city
+    val urban_tiles : ListBuffer[(Int,Int)] = current_city.urbanTilePoints
+    val suburban_tiles : ListBuffer[(Int,Int)] = current_city.suburbanTilePoints
+    val rural_tiles : ListBuffer[(Int,Int)] = current_city.ruralTilePoints
+    // compile a logic to prefer to build in urban more than suburban and rural
+    for ((x,y) <- loc)
+      // iterate through each points
+      // if x & y is a good tile
+      // and in an urban area
+      (x,y) match
+        // for the first hospital
+        case (x,y) if current_city.hospitalCount == 0 && current_city.hospitalCount < 4 && urban_tiles.length >= 100 && IsBuildable(funds = Population.totalMoney, city = current_city) =>
+          Some(Hospital(pointX = x, pointY = y))
+          // logic to add
+          // 1. remove (x,y) from urban tile/ suburban tile
+          // 2. add (x,y) to Building tiles of city object
+          // 3. deduct money from Population.total_money -->
+          // 4.
+          println(f"Hospital built at $x,$y")
+        // for the second hospital and third hospital
+        case (x,y) if suburban_tiles.contains((x,y)) &&  current_city.hospitalCount < 4 && suburban_tiles.length >= 200 && urban_tiles.length - 100 >= 200 && IsBuildable(funds = Population.totalMoney , city = current_city) =>
+          Some(Hospital(pointX = x, pointY = y))
+          println(f"Hospital built at $x,$y")
+        case (x,y) if rural_tiles.contains((x,y)) && current_city.hospitalCount < 4 && suburban_tiles.length - 200 >= 400 && rural_tiles.length >= 100 &&  IsBuildable(funds = Population.totalMoney , city = current_city) =>
+          Some(Hospital(pointX = x, pointY = y))
+          println("___")
 
-end Hospital
+    end for
+  end Build
+
+
+----------------------------------
+
+package controller
+
+import javafx.fxml.FXML
+import javafx.scene.control.ScrollPane
+import model.BiomeMap
+
+class MapPaneController:
+
+  // Link the ScrollPane from FXML
+  @FXML private var mapScrollPane: ScrollPane = _
+
+  // Initialize method called automatically after FXML is loaded
+  @FXML def initialize(): Unit =
+    // Generate the map from BiomeMap model
+    val biomeMapScrollPane = BiomeMap.GenerateBiomeMap()
+
+    // Set the generated map as the content of the ScrollPane
+    mapScrollPane.setContent(biomeMapScrollPane.getContent)
+
+end MapPaneController
 
 

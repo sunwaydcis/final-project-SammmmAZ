@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
@@ -54,9 +55,49 @@
                </font>
             </Button>
          </children></HBox>
+      <Separator prefHeight="13.0" prefWidth="600.0" />
 
        <HBox prefHeight="32.0" prefWidth="600.0">
-
-       </HBox>
+         <children>
+            <ImageView fitHeight="32.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" />
+            <Label alignment="CENTER" opacity="0.89" prefHeight="32.0" prefWidth="82.0" text="Population" textAlignment="RIGHT">
+               <font>
+                  <Font name="Cambria Bold Italic" size="14.0" />
+               </font>
+            </Label>
+            <Separator orientation="VERTICAL" prefHeight="15.0" prefWidth="8.0" />
+            <Label alignment="CENTER_RIGHT" prefHeight="32.0" prefWidth="82.0" text="10000">
+               <font>
+                  <Font name="Britannic Bold" size="13.0" />
+               </font>
+            </Label>
+            <Separator orientation="VERTICAL" prefHeight="200.0" />
+            <ImageView fitHeight="32.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" />
+            <Label alignment="CENTER" opacity="0.86" prefHeight="32.0" prefWidth="71.0" text="Money" textAlignment="CENTER">
+               <font>
+                  <Font name="Cambria Bold Italic" size="14.0" />
+               </font>
+            </Label>
+            <Separator orientation="VERTICAL" prefHeight="200.0" />
+            <Label alignment="CENTER_RIGHT" prefHeight="32.0" prefWidth="64.0" text="1000">
+               <font>
+                  <Font name="Britannic Bold" size="13.0" />
+               </font>
+            </Label>
+            <Separator orientation="VERTICAL" prefHeight="200.0" />
+            <ImageView fitHeight="32.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true" />
+            <Label alignment="CENTER" prefHeight="32.0" prefWidth="73.0" text="Score" textAlignment="CENTER">
+               <font>
+                  <Font name="Cambria Bold Italic" size="14.0" />
+               </font>
+            </Label>
+            <Separator orientation="VERTICAL" prefHeight="200.0" />
+            <Label alignment="CENTER_RIGHT" prefHeight="32.0" prefWidth="93.0" text="0">
+               <font>
+                  <Font name="Britannic Bold" size="13.0" />
+               </font>
+            </Label>
+         </children></HBox>
+      <Separator prefHeight="16.0" prefWidth="600.0" />
    </children>
 </VBox>
