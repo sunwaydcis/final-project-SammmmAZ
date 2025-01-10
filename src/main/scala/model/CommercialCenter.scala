@@ -15,14 +15,16 @@ end CommercialCenter
 // define object member for objects of class Commercial center
 class CommercialCenter(pointX: Int, pointY: Int) extends Building(
   tileData = CommercialCenter.commercialCenterTile,
-  price = 300):
+  price = 300) with Levels:
   // code to execute when constructor is called
   CommercialCenter.cc_counter += 1
   // method to identify the 
   val id: String = CommercialCenter.name
   // accepts from the constructor
   val coordinate: (Int, Int) = (pointX, pointY)
-
-
+  
+  // members of levels 
+  hasLevels = true
+  upgradePrice = 500
 end CommercialCenter
 

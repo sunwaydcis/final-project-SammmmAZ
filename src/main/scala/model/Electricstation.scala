@@ -11,4 +11,5 @@ class Electricstation(pointX : Int, pointY : Int) extends Building(
   , price = 300
 ):
   val coords : (Int,Int) = (pointX, pointY)
+  
 end Electricstation

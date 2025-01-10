@@ -16,12 +16,15 @@ end Hospital
 
 class Hospital(pointX: Int, pointY: Int) extends Building(
   tileData = Hospital.hospitalTile, // all hospitals share the same Image data
-  price = 500): // this is the initial price to build
+  price = 500) with Levels: // this is the initial price to build
   // ):
   // define a point / coordinate data upon constructor called
   val coordinate: (Int, Int) = (pointX, pointY)
   // everytime Hospital constructor is called, add one to the
   Hospital.totalHospital += 1
   val id: String = Hospital.hospital_name
+  
+  hasLevels = true
+  upgradePrice = 1500
 end Hospital
 

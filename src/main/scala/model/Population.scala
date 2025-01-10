@@ -36,8 +36,8 @@ object Population:
     // obtain list of city in Map
     val cities : ListBuffer[City] = BiomeMap.ListOfCity
     
-    for city <- cities do 
-      city.local_population =  
+//    for city <- cities do 
+//      city.local_population =  
   
   // def PopulationGrowthPerCity(): Unit
   

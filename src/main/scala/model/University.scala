@@ -14,11 +14,15 @@ end University
 class University extends Building(
   tileData = University.UniversityTile,
   price = 1350,
-):
+) with Levels:
   // improve the counter by 1
   University.uniCount += 1
   // save the current instance of uni name as id for uni object of class uni
   val id : String = University.university_name
   
   // define a member for uniqueness effect
+  
+  // levels members
+  hasLevels = true
+  upgradePrice = 2000
 end University
