@@ -23,5 +23,7 @@ class RootController extends JFXApp3.PrimaryStage:
     // enable maximized
     maximized = true
   end start
+  
+  // define a method to update contents of 
 end RootController
 
