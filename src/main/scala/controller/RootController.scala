@@ -4,7 +4,8 @@ import scalafx.application.JFXApp3
 import javafx.fxml.FXML
 import scalafx.scene.Scene
 import scalafx.scene.image.Image
-import scalafx.scene.layout.BorderPane
+import javafx.scene.layout.BorderPane
+import scalafx.scene.layout.BorderPane as BP
 import javafx.fxml.FXMLLoader
 import scalafx.scene.control.ScrollPane
 import model.BiomeMap
@@ -30,9 +31,8 @@ class RootController:
     val gameMap : ScrollPane = BiomeMap.loadBiomeMap
 
     // set the content for each region of the border pane
-    rootPane.top = ribbonLoader.load()
-    rootPane.left = actionBarLoader.load()
-    rootPane.center = gameMap
+    rootPane.setTop(ribbonLoader.load())
+    rootPane.setLeft(actionBarLoader.load())
     // start the game cycle
   end InitializeGame
 

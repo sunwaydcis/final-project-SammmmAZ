@@ -1,3 +1,4 @@
+import controller.RootController
 import javafx.fxml.FXMLLoader
 import scalafx.application.{JFXApp3, Platform}
 import scalafx.scene.Scene
@@ -7,8 +8,8 @@ import model.Population.{GrowPopulation, growthCounter}
 import scalafx.scene.control.{ScrollPane, SplitPane}
 import model.Population
 import scalafx.scene.image.Image
-import scalafx.scene.layout.BorderPane
-
+import javafx.scene.layout.BorderPane
+import javafx.scene.Scene as JFXScene
 import scala.concurrent.{ExecutionContext, Future}
 import java.util.concurrent.{Executors, ScheduledExecutorService, TimeUnit}
 import scala.concurrent
@@ -41,20 +42,15 @@ object MainApp extends JFXApp3:
     try
       // load root fxml file
       val rootLoader : FXMLLoader = new FXMLLoader(getClass.getResource("/views/fxml/root.fxml"))
-      val BorderPane : BorderPane = new BorderPane(rootLoader.load[BorderPane]())
+      // set controller for rootLoader
+      val rootPane: BorderPane = rootLoader.load().asInstanceOf[BorderPane]
       //
       // set the primary stage
       primaryStage = new JFXApp3.PrimaryStage:
         title = "Civilization Simulation - Alpha Testing"
-        scene = new Scene (BorderPane,1280,720)
+        scene = new Scene (new JFXScene(rootPane,1280,720))
         icons.add(new Image(getClass.getResource("/image/tiles/plainsTile.png").toExternalForm))
         maximized = true
-
-
-      // set center Pane
-      val menuLoader : FXMLLoader = new FXMLLoader(getClass.getResource("/views/fxml/CenterPane.fxml"))
-      val menuPane : SplitPane = new SplitPane(menuLoader.load[SplitPane]())
-
     catch
       case e: Exception => e.printStackTrace()
   end start
