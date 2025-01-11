@@ -25,8 +25,8 @@ package controller
 // -- else, will not allow user to complete the BuildAction
 //                -> Display toast on below
 
-class ActionBarController :
+class LeftPaneController :
   // bind fxml id to variables
   // ensure fxml file is connected to ActionBarController class via fx:controller 
   
-end ActionBarController
+end LeftPaneController

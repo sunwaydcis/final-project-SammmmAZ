@@ -1,11 +1,15 @@
 package controller
 
+// import relevant libraries
 import scalafx.application.Platform
 import javafx.fxml.FXML
 import scalafx.scene.control.Button
 import scalafx.stage.Stage
+import scalafx.scene.Scene
+import javafx.fxml.FXMLLoader
+import scalafx.scene.layout.BorderPane
 
-class MenuPageController:
+class CenterPaneController:
   // load fxml element from file
 
   // init start button
@@ -27,7 +31,9 @@ class MenuPageController:
       title = "Game"
     end gameStage
     //presents the game stage
-    gameStage.show()
+    // Initialize the game components
+    val rootController = FXMLLoader().getController[RootController]
+    rootController.InitializeGame()
   end OnClickStartGame
 
   @FXML

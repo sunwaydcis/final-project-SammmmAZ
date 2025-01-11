@@ -24,7 +24,7 @@ class Hospital(pointX: Int, pointY: Int) extends Building(
   Hospital.totalHospital += 1
   val id: String = Hospital.hospital_name
   
-  hasLevels = true
-  upgradePrice = 1500
+  val hasLevels = true
+  val upgradePrice = 1500
 end Hospital
 

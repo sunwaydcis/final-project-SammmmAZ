@@ -7,7 +7,7 @@ fx:controller="controller.RootController" fx:id="rootPane">
         <fx:include source="RibbonDisplayMenu.fxml"></fx:include>
     </top>
     <center>
-        <fx:include source="menuScreen.fxml"></fx:include>
+        <fx:include source="CenterPane.fxml"></fx:include>
     </center>
 </BorderPane>
 

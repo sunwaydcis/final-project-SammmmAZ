@@ -1,21 +1,21 @@
+import javafx.fxml.FXMLLoader
 import scalafx.application.{JFXApp3, Platform}
 import scalafx.scene.Scene
 import model.BiomeMap
 import model.BiomeMap.{RunnableUpdateMapData, RunnableUpdateMapView}
 import model.Population.{GrowPopulation, growthCounter}
-import scalafx.scene.control.ScrollPane
+import scalafx.scene.control.{ScrollPane, SplitPane}
 import model.Population
 import scalafx.scene.image.Image
+import scalafx.scene.layout.BorderPane
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Random
 import java.util.concurrent.{Executors, ScheduledExecutorService, TimeUnit}
 import scala.concurrent
 import scala.util.Random
-import scala.util.Random
 
 
-object main extends JFXApp3:
+object MainApp extends JFXApp3:
 
   // define an execution thread to manage thread pool for background tasks
   // allows to run Background operation without blocking UI thread
@@ -35,22 +35,32 @@ object main extends JFXApp3:
   override  def start(): Unit =
     // main entry point into the app
     BiomeMap.GenerateBiomeMap(mapDataArray = BiomeMap.mapRegion)
-    
     var mainGameMap = BiomeMap.gameMap
+    //---------
+    //---------
+    try
+      // load root fxml file
+      val rootLoader : FXMLLoader = new FXMLLoader(getClass.getResource("/views/fxml/root.fxml"))
+      val BorderPane : BorderPane = new BorderPane(rootLoader.load[BorderPane]())
+      //
+      // set the primary stage
+      primaryStage = new JFXApp3.PrimaryStage:
+        title = "Civilization Simulation - Alpha Testing"
+        scene = new Scene (BorderPane,1280,720)
+        icons.add(new Image(getClass.getResource("/image/tiles/plainsTile.png").toExternalForm))
+        maximized = true
 
-    // sets the stage
-    primaryStage = new JFXApp3.PrimaryStage:
-      title = "Civilization Simulation - Alpha Testing"
-      scene = mapScene
-      icons.add(new Image(getClass.getResource("/image/tiles/plainsTile.png").toExternalForm))
-      maximized = true
 
-    // run the random map update
-    ScheduleRandomMapUpdate()
+      // set center Pane
+      val menuLoader : FXMLLoader = new FXMLLoader(getClass.getResource("/views/fxml/CenterPane.fxml"))
+      val menuPane : SplitPane = new SplitPane(menuLoader.load[SplitPane]())
+
+    catch
+      case e: Exception => e.printStackTrace()
   end start
 
   // function to call map updates
-  def ScheduleRandomMapUpdate(): Unit =
+  private def ScheduleRandomMapUpdate(): Unit =
     // select the delay to be between 1 - 5 seconds
     val delay : Int = Random.nextInt(5000) + 1000
     // use  the  future block

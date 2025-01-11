@@ -4,7 +4,7 @@ trait Levels:
   var hasLevels: Boolean // implemented by classes extending levels
   var isUpgradeable : Boolean = true
   var currentLevel : Int = 1
-  var upgradePrice: Int 
+  var upgradePrice: Int  // implemented at each class respectively
   
   // define a value to be defined at random
   lazy val maxLevel : Int = if hasLevels then 5 else 0

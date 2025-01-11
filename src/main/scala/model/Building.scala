@@ -15,7 +15,7 @@ abstract class Building(tileData : Image,price : Int):
   
   // at  a high level view, building has data for map,
   // and money to add building to city
-  val buildingTileImage : Image 
+  val buildingTileImage : Image = tileData
   // building cost
   var buildingPrice : Int = price
 end Building
