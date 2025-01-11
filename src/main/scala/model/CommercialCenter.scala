@@ -24,7 +24,7 @@ class CommercialCenter(pointX: Int, pointY: Int) extends Building(
   val coordinate: (Int, Int) = (pointX, pointY)
   
   // members of levels 
-  hasLevels = true
-  upgradePrice = 500
+  var hasLevels = true
+  var upgradePrice = 500
 end CommercialCenter
 
