@@ -10,6 +10,7 @@ import scalafx.scene.image.Image
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Random
 import java.util.concurrent.{Executors, ScheduledExecutorService, TimeUnit}
+import scala.concurrent
 import scala.util.Random
 import scala.util.Random
 
@@ -53,7 +54,7 @@ object main extends JFXApp3:
     // select the delay to be between 1 - 5 seconds
     val delay : Int = Random.nextInt(5000) + 1000
     // use  the  future block
-    Future{
+    Future:
       // Pause or delay for 1 second atleast
       Thread.sleep(delay)
       // call the grow population function
@@ -63,8 +64,13 @@ object main extends JFXApp3:
       //println(f"Map updated times: ${Population.growthCounter}")
       RefreshStage()
       ScheduleRandomMapUpdate()
-    }
   end ScheduleRandomMapUpdate
+
+  // define a function to start game cycle
+  def StartGameCycle(): Unit =
+    ScheduleRandomMapUpdate()
+  end StartGameCycle
+
 
   private def RefreshStage(): Unit =
     // Obtain HValue and VValue of the scroll pane
