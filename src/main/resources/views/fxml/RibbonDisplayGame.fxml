@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
-fx:controller="BiomeMapApp.controller.RibbonBarGameController">
+<VBox maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="BiomeMapApp.controller.RibbonBarGameController">
    <children>
       <MenuBar>
         <menus>
@@ -29,27 +27,26 @@ fx:controller="BiomeMapApp.controller.RibbonBarGameController">
       </MenuBar>
        <HBox maxHeight="-Infinity" minHeight="-Infinity" prefHeight="32.0" prefWidth="1280.0" spacing="10">
          <children>
-            <Button fx:id="buttonToMap" mnemonicParsing="false" prefHeight="27.0" prefWidth="120.0" text="Map">
+            <Button fx:id="buttonToMap" mnemonicParsing="false" onAction="#OnActionToMaps" prefHeight="27.0" prefWidth="120.0" text="Map">
                <font>
                   <Font name="Cambria Bold Italic" size="14.0" />
                </font>
             </Button>
-            <Button fx:id="buttonToStats" maxWidth="-Infinity" mnemonicParsing="false" prefWidth="120.0" text="Statistics" onAction="#OnActionToStats">
+            <Button fx:id="buttonToStats" maxWidth="-Infinity" mnemonicParsing="false" onAction="#OnActionToStats" prefWidth="120.0" text="Statistics">
                <font>
                   <Font name="Cambria Bold Italic" size="14.0" />
                </font>
             </Button>
-            <Button  mnemonicParsing="false" prefWidth="120.0" text="Speed">
+            <Button mnemonicParsing="false" prefWidth="120.0" text="Speed">
                <font>
                   <Font name="Cambria Bold Italic" size="14.0" />
                </font>
             </Button>
-            <Label  prefHeight="27.0" prefWidth="27.0" text="x1" textAlignment="CENTER">
+            <Label prefHeight="27.0" prefWidth="27.0" text="x1" textAlignment="CENTER">
                <font>
                   <Font name="Cambria Bold Italic" size="12.0" />
                </font>
             </Label>
-            <ProgressBar fx:id="progressBar" opacity="0.59" prefHeight="27.0" prefWidth="700.0" progress="0.18" />
             <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="120.0" text="Pause">
                <font>
                   <Font name="Cambria Bold Italic" size="14.0" />
@@ -57,49 +54,5 @@ fx:controller="BiomeMapApp.controller.RibbonBarGameController">
             </Button>
          </children></HBox>
       <Separator prefHeight="13.0" prefWidth="600.0" />
-
-       <HBox prefHeight="32.0" prefWidth="1280.0">
-         <children>
-             <ImageView fitHeight="32.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" fx:id="populationIcon" ></ImageView>
-
-            <Label alignment="CENTER" opacity="0.89" prefHeight="32.0" prefWidth="200.0" text="Population" textAlignment="RIGHT">
-               <font>
-                  <Font name="Cambria Bold Italic" size="14.0" />
-               </font>
-            </Label>
-            <Separator orientation="VERTICAL" prefHeight="15.0" prefWidth="8.0" />
-            <Label alignment="CENTER_RIGHT" prefHeight="32.0" prefWidth="100.0" fx:id="populationLabel" text="10000">
-               <font>
-                  <Font name="Britannic Bold" size="13.0" />
-               </font>
-            </Label>
-            <Separator orientation="VERTICAL" prefHeight="200.0" />
-            <ImageView fitHeight="32.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" fx:id="moneyIcon" />
-            <Label alignment="CENTER" opacity="0.86" prefHeight="32.0" prefWidth="200.0" fx:id="moneyLabel" text="Money" textAlignment="CENTER">
-               <font>
-                  <Font name="Cambria Bold Italic" size="14.0" />
-               </font>
-            </Label>
-            <Separator orientation="VERTICAL" prefHeight="200.0" />
-            <Label alignment="CENTER_RIGHT" prefHeight="32.0" prefWidth="100.0" text="1000">
-               <font>
-                  <Font name="Britannic Bold" size="13.0" />
-               </font>
-            </Label>
-            <Separator orientation="VERTICAL" prefHeight="200.0" />
-            <ImageView fitHeight="32.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" fx:id="foodIcon" />
-            <Label alignment="CENTER" prefHeight="32.0" prefWidth="200.0" text="Food" textAlignment="CENTER">
-               <font>
-                  <Font name="Cambria Bold Italic" size="14.0" />
-               </font>
-            </Label>
-            <Separator orientation="VERTICAL" prefHeight="200.0" />
-            <Label alignment="CENTER_RIGHT" prefHeight="32.0" prefWidth="275.0" text="0">
-               <font>
-                  <Font name="Britannic Bold" size="13.0" />
-               </font>
-            </Label>
-         </children></HBox>
-      <Separator prefHeight="16.0" prefWidth="600.0" />
    </children>
 </VBox>

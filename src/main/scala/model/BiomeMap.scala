@@ -2,15 +2,16 @@ package model
 
 // import necessary libraries
 import scalafx.scene.Scene
-import scalafx.scene.control.ScrollPane
+import scalafx.scene.control.{Label, ScrollPane, Separator}
 import scalafx.scene.image.{Image, ImageView}
-import scalafx.scene.layout.Pane
+import scalafx.scene.layout.{HBox, Pane, VBox}
 
 import scala.collection.mutable.{ListBuffer, Queue}
 import scala.util.{Failure, Success}
 import scala.concurrent.*
 import scala.concurrent.ExecutionContext.Implicits.global
 import javafx.application.Platform
+import scalafx.geometry.Orientation.VERTICAL
 
 import scala.util.{Random, Success}
 
@@ -37,7 +38,7 @@ object BiomeMap:
   // map will have pixels of 450 by 450
   // a suggestion to increase the size or decrease it based on game difficulty
 
-  var gameMap : ScrollPane = loadBiomeMap
+  var gameMap: ScrollPane = loadBiomeMap
   // image var traits
   // tile pixel size
   protected[model] var mapHeight: Int = 250
@@ -226,16 +227,9 @@ object BiomeMap:
     var city1 : City = new City
     city1.AddCityToMap(city1.generationPoint)
     this.ListOfCity.append(city1)
+    
 
 
-    // instantiate another city
-    var city2 : City = new City
-    city2.AddCityToMap(city2.generationPoint)
-    this.ListOfCity.append(city2)
-
-    var city3 : City = new City
-    city3.AddCityToMap(city3.generationPoint)
-    this.ListOfCity.append(city3)
 
 
     // creates a pane
@@ -311,87 +305,7 @@ object BiomeMap:
     //println("BiomeMap update map view has been invoked")
   end UpdateMapView
 
-  // remove access from other functions
-  private def UpdateMapData(mapData : Array[Array[Int]], knownCityTiles : scala.collection.mutable.Set[(Int, Int)]) : Unit =
-    // use sequence data structure to store order in which the city will expand
-    val directions = Seq(
-      (-1, 0), // North
-      (1, 0), // South
-      (0, -1), // West
-      (0, 1), // East
-      (-1, -1), // North-West
-      (-1, 1), // North-East
-      (1, -1), // South-West
-      (1, 1) // South-East
-    )
-
-    // iterate through city tiles
-    for (x,y) <- knownCityTiles do
-      // check for all tiles in all direction of the set of known city tiles
-      var isCurrentCityUpdated : Boolean = false
-
-      for ((dx,dy) <- directions if !isCurrentCityUpdated) do
-        // for every tile adjacent to a city tile
-        val newX = x + dx
-        val newY = y + dy
-
-        //check if the new tile is within bounds
-        if newX > 0 && newX < mapWidth && newY > 0 && newY < mapHeight && mapRegion(newX)( newY) == 1 then
-          // convert said coordinate on mapRegion data structure to 3 for city tile
-          mapRegion(newX)( newY) = 3
-          // add the new set of coordinate to CityTiles
-          cityTiles.add((newX, newY))
-          //println(f"$newX, $newY has been added to city tiles")
-          // change it to true to update the city once
-          isCurrentCityUpdated = true
-        end if
-      end for
-    end for
-  end UpdateMapData
-
-
-  // define a function that updates the map data structure
-  // only update one tile
-  protected[model] def UpdateMapDataII(mapData : Array[Array[Int]], knownCityTiles : scala.collection.mutable.Set[(Int,Int)]): Unit =
-    // define  a flag to terminate the while loop when tile is added
-    var tileAdded : Boolean = false
-    // define a flag to terminate the loop once there is no more tile to add
-    var tiletoAdd : Int = 1
-
-    while !tileAdded do
-      // get the next tile direction
-      val nextTileVector : (Int,Int) = GetDirection(directions)
-      val dx : Int = nextTileVector(0)
-      val dy : Int = nextTileVector(1)
-
-      while tiletoAdd != 0 do
-        for ((x,y)<- knownCityTiles  if !tileAdded && tiletoAdd!= 0)
-          // get coordinate of city tile
-          val x_coordinate : Int = x
-          val y_coordinate : Int = y
-          // get coordinate of next city tile
-          val nextX : Int = x + dx
-          val nextY : Int = y + dy
-
-          // get coordinate of adjacent tile to the current city tile in the direction of the current vector
-          val newX : Int =  x_coordinate + dx
-          val newY : Int = y_coordinate + dy
-
-          // check if the tile is valid with IsValid function
-          if newX > 0 && newX < mapWidth - 1 && newY > 0 && newY < mapHeight - 1 && mapRegion(newX)(newY) == 1 then
-            // add the city tile
-            mapRegion(newX)(newY) = 3
-            // add the city tile to the set
-            knownCityTiles.add((newX, newY))
-            //println(f"City has added tile : $newX, $newY") // for debug purposes
-            // update the flags to terminate the loop
-            tiletoAdd -= 1
-            tileAdded = true
-          end if
-        end for
-      end while
-    end while
-  end UpdateMapDataII
+  // Create a function that wraps the GameMap in a VBox with all the labels
 
 
   // direction data:
@@ -420,14 +334,14 @@ object BiomeMap:
   end GetDirection
 
   // define new functions to work with Cities
-  protected[model] def UpdateMapDataIII(): Unit =
+  protected[model] def UpdateMapData(): Unit =
     //println("UpdateMapDataIII has been called")
     var counter : Int = 1 // for debug purposes
     for city <- this.ListOfCity do
       city.ExpandCity()
       //println(s"City $counter has expanded") // for debug purposes
     end for
-  end UpdateMapDataIII
+  end UpdateMapData
 
 
   // define wrapper functions to wrap updateMapView as runnable
@@ -440,26 +354,81 @@ object BiomeMap:
     }
   end RunnableUpdateMapView
 
-  // define wrapper function tp wrap update map data structure
-  // to be made private
-  def RunnableUpdateMapData(): Runnable =
-    () => UpdateMapData(mapData = this.mapRegion, knownCityTiles = cityTiles)
-  end RunnableUpdateMapData
 
-  // define wrapper function to wrap the updateMapDatastructure function II
-  def RunnableUpdateMapDataII(): Runnable =
-    () => UpdateMapDataII(mapData = this.mapRegion, knownCityTiles = cityTiles)
-  end RunnableUpdateMapDataII
-  
   // define a function to add a city to the BiomeMap
-  def AddMapToCity(): Unit =
+  private def AddMapToCity(): Unit =
     // initiate a city object
-    val city = new City()
+    val city: City = new City()
+    println("AddMapToCity invoked")
     // add city to the map
     city.AddCityToMap(city.generationPoint)
     // update BiomeMap member of CityList
-    this.ListOfCity.append(city) // add generated city to list of city
+    ListOfCity.append(city) // add generated city to list of city
   end AddMapToCity
+
+  def ActionAddCityToMap(): Unit=
+    println("ActionAddCityToMap invoked")
+    AddMapToCity()
+  end ActionAddCityToMap
+
+
+  // define new function to display all labels
+  def ReturnMapWrapper(): VBox =
+    val popLabel: Label = new Label("Population:"):
+      prefHeight = 32
+      prefWidth = 200
+      style = "-fx-font-family: 'Cambria Bold Italic'; -fx-font-size: 14;"
+    end popLabel
+
+    val popNumbers: Label = new Label(Population.population_total.toString):
+      prefHeight = 32
+      prefWidth = 200
+      style = "-fx-font-family: 'Cambria Bold Italic'; -fx-font-size: 14;"
+    end popNumbers
+
+    val moneyLabel: Label = new Label("Money:"):
+      prefHeight = 32
+      prefWidth = 200
+      style = "-fx-font-family: 'Cambria Bold Italic'; -fx-font-size: 14;"
+    end moneyLabel
+
+    val moneyNumbers: Label = new Label(Population.totalMoney.toString):
+      prefHeight = 32
+      prefWidth = 200
+      style = "-fx-font-family: 'Cambria Bold Italic'; -fx-font-size: 14;"
+    end moneyNumbers
+
+    val dayLabel : Label = new Label("Days: "):
+      prefHeight = 32
+      prefWidth = 200
+      style = "-fx-font-family: 'Cambria Bold Italic'; -fx-font-size: 14;"
+    end dayLabel
+
+    val dayNumber : Label = new Label(Population.growthCounter.toString):
+      prefHeight = 32
+      prefWidth = 200
+      style = "-fx-font-family: 'Cambria Bold Italic'; -fx-font-size: 14;"
+    end dayNumber
+
+    // Filled out predefined labels
+    val labelHBox : HBox = new HBox():
+      children = Seq(popLabel,popNumbers,new Separator { orientation = VERTICAL }, moneyLabel, moneyNumbers,new Separator { orientation = VERTICAL }, dayLabel, dayNumber)
+      prefWidth = 1280
+    end labelHBox
+
+    val mapPane : ScrollPane = loadBiomeMap
+
+    val wrappedMapBox : VBox = new VBox():
+      children = Seq(labelHBox,mapPane)
+    end wrappedMapBox
+
+    return wrappedMapBox
+  end ReturnMapWrapper
+
+
+
+
+
   
 
 

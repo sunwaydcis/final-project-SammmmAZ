@@ -90,8 +90,7 @@ object City:
     //println(this.cityTexture) // for debug purposes
     // to select and pop one random city texture from the city texture variable
     // and assign it to a an object of the class city
-    val selectedTexture : List[Int] = this.cityTexture.head
-    this.cityTexture.remove(0)
+    val selectedTexture : List[Int] = this.cityTexture(Random.nextInt(3))
     //println(this.cityTexture) // for debug purposes
     selectedTexture
   end RandomTextureAssigning
@@ -146,10 +145,6 @@ end City
 
 class City():
   // to hold all background process list of each city
-  var backgroundProcesslist : List[Runnable] =
-    List(
-      () => ExpandCity()
-    )
 
   // initiate local population
   var local_population : Int = City.start_population
@@ -170,8 +165,10 @@ class City():
   protected[model] var ruralTilePoints: scala.collection.mutable.ListBuffer[(Int, Int)] = ListBuffer()
 
 
-  var hospitalCount : Int = 1
+  var hospitalCount : Int = 0
   var commercialCenterCount : Int = 0
+  var waterStationCount : Int = 0
+  var electricStationCount : Int = 0
   var suburbanTileCounter : Int = 0
   // put a counter on the rural tiles
   var ruralTileCounter : Int = 0
@@ -300,54 +297,54 @@ class City():
 //  // implement a buildings list
   private var buildingList : BuildingList[Building] = new BuildingList()
 
-
-//  // implement in city class
-//  // logic of checking and managing buildings belong to the city
-//  private def hasBuilding(list : ListBuffer[A]): (Boolean, Boolean) =
-//    var water_station_flag : Boolean = false
-//    var electric_station_flag : Boolean = false
-//    for _ <- list do
-//        (x: WaterStation) => water_station_flag = true;
-//        (x: ElectricStation) => electric_station_flag = true;
-//        (x: Building) => null;
-//    end for
-//    (water_station_flag,electric_station_flag)
-//  end hasBuilding
-
-
-//  protected [model] def AddHospital[T](list : ListBuffer[T], money : Int): Unit =
-//    // pre-conditions
-//    // 1. Has WaterStation
-//    // 2. Has Electric Station
-//    // 3. Has Money more than cost
-//    // 4. Hospital count not more than or equal to 5
-//
-//    val flags : (Boolean,Boolean) = hasBuilding(list = buildingList)
-//    if flags(0) && flags(1) && money >= Population.totalMoney && !(this.hospitalCount >= 5) then
-//      val seqOtiles : Seq[(Int,Int)] = Random.shuffle(this.cityTiles.toSeq)
-//      var points : (Int,Int) = seqOtiles.take(1).toSet.head
-//      val hosp: Hospital = Hospital(pointX = points(0), pointY = points(1))
-//      this.buildingList += hosp
-//      else
-//
+  // define function to retrieve one coordinate from ListOfCityTiles
+  private def RetrieveRandomPoint(): (Int,Int)=
+    val coordinates : List[(Int,Int)]= this.cityTiles.toList
+    val coordinate : (Int,Int) = coordinates(Random.nextInt(this.cityTiles.size) + 1)
+    coordinate
+  end RetrieveRandomPoint
 
 
 
-  // function to add specific buildings to the city
-  // def AddHospital(): Unit
-  //     add certain affects: use stronger growth function
-  //                        : work over the algorithm
-  //                        : consumes more money to manage
 
-  // def AddCommercialCenter(): Unit
-  //     add certain effects: Increase money production rate
-  //                        : Decrease cost to buy buildings and food
+  def AddHospital(): Unit =
+    val buildingCoords: (Int,Int) = RetrieveRandomPoint()
+    val x : Int = buildingCoords(0)
+    val y : Int = buildingCoords(1)
 
-  // def AddUniversity(): Unit
-  //     add effect : Increase money production rate
-  //                : Decrease birth rate/ lower growth function return
-  
-  // def AddFarm(): Unit
+    val hospital : Hospital = new Hospital(pointX = x, pointY = y)
+    //BiomeMap.mapRegion(x)(y) = # add Hospital Texture Pack
+    this.buildingList.Add(hospital)
+    this.hospitalCount += 1
+    // return this
+    Population.totalMoney -= hospital.buildingPrice
+    println("Hospital Added to city")
+  end AddHospital
+
+  def AddCommercialCenter(): Unit =
+    val builingCoords : (Int,Int) = RetrieveRandomPoint()
+    val x : Int = builingCoords(0)
+    val y : Int = builingCoords(1)
+
+    val comCenter : CommercialCenter = new CommercialCenter(pointX = x, pointY = y)
+    // BiomeMap.mapRegion(x)(y) = # CommercialCenter texture pack
+    this.buildingList.Add(comCenter)
+    this.commercialCenterCount += 1
+
+    Population.totalMoney -= comCenter.buildingPrice
+  end AddCommercialCenter
+
+  var farmCount : Int = 0
+  def AddFarm(): Unit =
+    val coords : (Int,Int) = RetrieveRandomPoint()
+    val x : Int = coords(0)
+    val y : Int = coords(1)
   //     add effect : city now produces food
   //                : price to buy food decreases
+    val farm : Farm = new Farm(pointX = x, pointY = y)
+    // BiomeMap.mapRegion(x)(y) = # Farm texture reference
+    this.buildingList.Add(farm)
+    this.farmCount += 1
+    Population.totalMoney -= farm.buildingPrice
+  end AddFarm
 end City

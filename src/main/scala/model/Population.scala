@@ -15,36 +15,31 @@ object Population:
   // and start a new city else where
   var growthCounter : Int = 0
   
-  // define a growth function
-  def GrowPopulation(counter : Int): Unit =
-    this.population_total += 5000
-    this.growthCounter += 1
-    val pop_now = this.population_total
-    val cityTiles = BiomeMap.cityTiles
-    //println(f"Population is now at $pop_now")
-    //println(f"City tiles now at $cityTiles")
-    BiomeMap.UpdateMapDataIII()
-  end GrowPopulation
-  
-  
+  // for statistics page
+  val timeData: ListBuffer[Int] = ListBuffer()
+  val populationData: ListBuffer[Int] = ListBuffer()
   
   // def a growth function for each city
   def GrowPopulationByCity(counter : Int): Unit =
     // obtain list of city in Map
-    println(Population.population_total)
+    timeData.append(this.growthCounter)
+    populationData.append(this.population_total)
     val cities : ListBuffer[City] = BiomeMap.ListOfCity
     Population.population_total = 0
+    this.growthCounter += 1
     for city <- cities do
       city.CityPopulationGrowth()
       Population.population_total += city.local_population
       city.ExpandCity()
       totalMoney += city.Revenue()
     end for
-    println(Population.totalMoney)
-    println(Population.population_total)
+    
+//    println(Population.totalMoney)
+//    println(Population.population_total)
     //this.population_foodSupply -= population_total
     //println(Population.population_foodSupply)
   end GrowPopulationByCity
-  
+end Population
+
   // def PopulationGrowthPerCity(): Unit
   

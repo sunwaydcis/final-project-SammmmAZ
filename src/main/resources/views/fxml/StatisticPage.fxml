@@ -5,7 +5,6 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-
 <VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="20.0" prefWidth="720.0" text="Statistics Available (Beta Release) : Population(Number Of Peole) Against Time(Days))" textAlignment="CENTER">
@@ -13,12 +12,12 @@
             <Font name="Cambria Bold Italic" size="14.0" />
          </font>
       </Label>
-      <LineChart>
+      <LineChart prefHeight="650.0" prefWidth="1240.0" fx:id="lineChart">
         <xAxis>
-          <CategoryAxis prefWidth="1260.0" side="BOTTOM" />
+          <CategoryAxis label="Days" prefWidth="1260.0" side="BOTTOM" />
         </xAxis>
         <yAxis>
-          <NumberAxis prefHeight="680.0" side="LEFT" />
+          <NumberAxis label="Population" prefHeight="680.0" side="LEFT" />
         </yAxis>
       </LineChart>
    </children>

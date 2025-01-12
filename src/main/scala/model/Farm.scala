@@ -1,6 +1,5 @@
 package model
 
-import Farm.getClass
 import scalafx.scene.image.Image
 
 // define farm class object
@@ -9,7 +8,7 @@ object Farm :
 end Farm
 
 class Farm(pointX : Int, pointY : Int) extends Building(
-  tileData = new Image(getClass.getResource("/image/tiles/cityTile.png").toExternalForm),
+  tileData =  Farm.farmTile,
   price = 450
 ) with Levels:
   val coords : (Int,Int) = (pointX, pointY)
