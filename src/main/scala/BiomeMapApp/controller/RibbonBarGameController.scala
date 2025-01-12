@@ -1,4 +1,4 @@
-package controller
+package BiomeMapApp.controller
 
 class RibbonBarGameController {
 

@@ -1,4 +1,4 @@
-package controller
+package BiomeMapApp.controller
 
 // doesn't require a model object 
 // invokes methods from Building class and BiomeMap class 

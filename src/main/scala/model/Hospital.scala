@@ -1,7 +1,6 @@
 package model
 
 import scalafx.scene.image.Image
-import model.Building
 // define hospital class for Buildings
 
 // Hospital companion object for static members of all instances of Class Hospital objects

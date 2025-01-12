@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <MenuBar>
         <menus>
@@ -26,19 +26,19 @@
           </Menu>
         </menus>
       </MenuBar>
-       <HBox prefHeight="32.0" prefWidth="600.0">
+       <HBox maxHeight="-Infinity" minHeight="-Infinity" prefHeight="32.0" prefWidth="1280.0" spacing="10">
          <children>
-            <Button mnemonicParsing="false" prefHeight="27.0" prefWidth="64.0" text="Map">
+            <Button mnemonicParsing="false" prefHeight="27.0" prefWidth="120.0" text="Map">
                <font>
                   <Font name="Cambria Bold Italic" size="14.0" />
                </font>
             </Button>
-            <Button mnemonicParsing="false" text="Statistics">
+            <Button maxWidth="-Infinity" mnemonicParsing="false" prefWidth="120.0" text="Statistics">
                <font>
                   <Font name="Cambria Bold Italic" size="14.0" />
                </font>
             </Button>
-            <Button mnemonicParsing="false" text="Speed">
+            <Button mnemonicParsing="false" prefWidth="120.0" text="Speed">
                <font>
                   <Font name="Cambria Bold Italic" size="14.0" />
                </font>
@@ -48,8 +48,8 @@
                   <Font name="Cambria Bold Italic" size="12.0" />
                </font>
             </Label>
-            <ProgressBar fx:id="ProgressBar" opacity="0.59" prefHeight="27.0" prefWidth="310.0" progress="0.18" />
-            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="63.0" text="Pause">
+            <ProgressBar fx:id="ProgressBar" opacity="0.59" prefHeight="27.0" prefWidth="700.0" progress="0.18" />
+            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="120.0" text="Pause">
                <font>
                   <Font name="Cambria Bold Italic" size="14.0" />
                </font>
@@ -57,42 +57,42 @@
          </children></HBox>
       <Separator prefHeight="13.0" prefWidth="600.0" />
 
-       <HBox prefHeight="32.0" prefWidth="600.0">
+       <HBox prefHeight="32.0" prefWidth="1280.0">
          <children>
-            <ImageView fitHeight="32.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" />
-            <Label alignment="CENTER" opacity="0.89" prefHeight="32.0" prefWidth="82.0" text="Population" textAlignment="RIGHT">
+            <ImageView fitHeight="32.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" />
+            <Label alignment="CENTER" opacity="0.89" prefHeight="32.0" prefWidth="200.0" text="Population" textAlignment="RIGHT">
                <font>
                   <Font name="Cambria Bold Italic" size="14.0" />
                </font>
             </Label>
             <Separator orientation="VERTICAL" prefHeight="15.0" prefWidth="8.0" />
-            <Label alignment="CENTER_RIGHT" prefHeight="32.0" prefWidth="82.0" text="10000">
+            <Label alignment="CENTER_RIGHT" prefHeight="32.0" prefWidth="100.0" text="10000">
                <font>
                   <Font name="Britannic Bold" size="13.0" />
                </font>
             </Label>
             <Separator orientation="VERTICAL" prefHeight="200.0" />
-            <ImageView fitHeight="32.0" fitWidth="27.0" pickOnBounds="true" preserveRatio="true" />
-            <Label alignment="CENTER" opacity="0.86" prefHeight="32.0" prefWidth="71.0" text="Money" textAlignment="CENTER">
+            <ImageView fitHeight="32.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" />
+            <Label alignment="CENTER" opacity="0.86" prefHeight="32.0" prefWidth="200.0" text="Money" textAlignment="CENTER">
                <font>
                   <Font name="Cambria Bold Italic" size="14.0" />
                </font>
             </Label>
             <Separator orientation="VERTICAL" prefHeight="200.0" />
-            <Label alignment="CENTER_RIGHT" prefHeight="32.0" prefWidth="64.0" text="1000">
+            <Label alignment="CENTER_RIGHT" prefHeight="32.0" prefWidth="100.0" text="1000">
                <font>
                   <Font name="Britannic Bold" size="13.0" />
                </font>
             </Label>
             <Separator orientation="VERTICAL" prefHeight="200.0" />
-            <ImageView fitHeight="32.0" fitWidth="33.0" pickOnBounds="true" preserveRatio="true" />
-            <Label alignment="CENTER" prefHeight="32.0" prefWidth="73.0" text="Score" textAlignment="CENTER">
+            <ImageView fitHeight="32.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" />
+            <Label alignment="CENTER" prefHeight="32.0" prefWidth="200.0" text="Score" textAlignment="CENTER">
                <font>
                   <Font name="Cambria Bold Italic" size="14.0" />
                </font>
             </Label>
             <Separator orientation="VERTICAL" prefHeight="200.0" />
-            <Label alignment="CENTER_RIGHT" prefHeight="32.0" prefWidth="93.0" text="0">
+            <Label alignment="CENTER_RIGHT" prefHeight="32.0" prefWidth="275.0" text="0">
                <font>
                   <Font name="Britannic Bold" size="13.0" />
                </font>

@@ -1,7 +1,5 @@
 package model
 
-import model.BiomeMap
-
 import scala.collection.mutable.ListBuffer
 
 object Population:

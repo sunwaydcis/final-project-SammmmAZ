@@ -1,9 +1,8 @@
 package model
 
 import scalafx.scene.image.Image
-import model.City
-import model.Hospital.hospital_name
-import model.University.{uniCount, university_name}
+import Hospital.hospital_name
+import University.{uniCount, university_name}
 
 import scala.collection.immutable.List
 import scala.collection.mutable.ListBuffer

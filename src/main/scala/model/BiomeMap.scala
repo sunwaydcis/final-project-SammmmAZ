@@ -13,7 +13,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import javafx.application.Platform
 
 import scala.util.{Random, Success}
-import model.City
 
 
 // represents model class / singleton object for Game Map

@@ -1,6 +1,6 @@
 package model
 
-import model.Farm.getClass
+import Farm.getClass
 import scalafx.scene.image.Image
 
 // define farm class object

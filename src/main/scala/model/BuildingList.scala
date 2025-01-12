@@ -1,9 +1,8 @@
 package model
 
-import model.Building
 import scala.collection.mutable.ListBuffer
 
-class BuildingList[B <: model.Building]:
+class BuildingList[B <: Building]:
   // define a method to contain Buildings
   val list_Buildings : ListBuffer[B] = ListBuffer()
 

@@ -2,7 +2,7 @@
 
 <?import javafx.scene.layout.*?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
-fx:controller="controller.RootController" fx:id="rootPane">
+fx:controller="BiomeMapApp.controller.RootController" fx:id="rootPane">
     <top>
         <fx:include source="RibbonDisplayMenu.fxml"></fx:include>
     </top>

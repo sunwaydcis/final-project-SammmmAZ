@@ -1,6 +1,6 @@
 package model
 
-import model.City.{GetGenerationPoint, GrowthFunctionExp, GrowthFunctionReg, RandomTextureAssigning, max_rural_tiles, max_suburban_tiles, max_urban_tiles}
+import City.{GetGenerationPoint, GrowthFunctionExp, GrowthFunctionReg, RandomTextureAssigning, max_rural_tiles, max_suburban_tiles, max_urban_tiles}
 import scalafx.scene.image.Image
 
 import scala.collection.mutable.Queue
@@ -12,7 +12,6 @@ import scala.language.postfixOps
 import scala.util.Random
 
 // import building class data
-import model.Building
 
 // companion object city
 object City:

@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<SplitPane dividerPositions="0.7455357142857143" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.CenterPaneController"
+<SplitPane dividerPositions="0.7455357142857143" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="BiomeMapApp.controller.CenterPaneController"
 style="-fx-background-image: url('/image/tiles/MenuPage.png'); -fx-background-size: cover;">
   <items>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="397.0" prefWidth="230.0" />

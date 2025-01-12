@@ -1,20 +1,23 @@
-import controller.RootController
+package BiomeMapApp
+
+import BiomeMapApp.MainApp.getClass
+import BiomeMapApp.controller.{CenterPaneController, RootController}
 import javafx.fxml.FXMLLoader
+import javafx.scene.Scene as JFXScene
+import javafx.scene.control.{ScrollPane, SplitPane}
+import javafx.scene.layout.BorderPane
+import model.BiomeMap.{RunnableUpdateMapData, RunnableUpdateMapView}
+import model.{BiomeMap, Population}
+import model.Population.{GrowPopulation, growthCounter}
 import scalafx.application.{JFXApp3, Platform}
 import scalafx.scene.Scene
-import model.BiomeMap
-import model.BiomeMap.{RunnableUpdateMapData, RunnableUpdateMapView}
-import model.Population.{GrowPopulation, growthCounter}
-import scalafx.scene.control.{ScrollPane, SplitPane}
-import model.Population
 import scalafx.scene.image.Image
-import javafx.scene.layout.BorderPane
-import javafx.scene.Scene as JFXScene
-import scala.concurrent.{ExecutionContext, Future}
+
 import java.util.concurrent.{Executors, ScheduledExecutorService, TimeUnit}
 import scala.concurrent
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Random
-
+import controller.RootController
 
 object MainApp extends JFXApp3:
 
@@ -30,8 +33,10 @@ object MainApp extends JFXApp3:
   lazy val mapScene: Scene = 
     new Scene(1280, 720):
       root = BiomeMap.gameMap
-    
-  
+
+  // load root fxml file
+  lazy val rootLoader: FXMLLoader = new FXMLLoader(getClass.getResource("/views/fxml/root.fxml"))
+  // set controller for rootLoader
 
   override  def start(): Unit =
     // main entry point into the app
@@ -40,8 +45,6 @@ object MainApp extends JFXApp3:
     //---------
     //---------
     try
-      // load root fxml file
-      val rootLoader : FXMLLoader = new FXMLLoader(getClass.getResource("/views/fxml/root.fxml"))
       // set controller for rootLoader
       val rootPane: BorderPane = rootLoader.load().asInstanceOf[BorderPane]
       //
@@ -96,3 +99,9 @@ object MainApp extends JFXApp3:
     )
     //println("Stage has been refreshed")
   end RefreshStage
+
+  def TransitionToGame(): Unit=
+    val rootController: RootController = rootLoader.getController[RootController]()
+    rootController.LoadGame()
+    MainApp.StartGameCycle()
+  end TransitionToGame
