@@ -173,10 +173,10 @@ class City():
   protected[model] var urbanTilePoints : scala.collection.mutable.ListBuffer[(Int,Int)] = ListBuffer()
   protected[model] var suburbanTilePoints : scala.collection.mutable.ListBuffer[(Int,Int)] = ListBuffer()
   protected[model] var ruralTilePoints: scala.collection.mutable.ListBuffer[(Int, Int)] = ListBuffer()
-  
-  
+
+
   var hospitalCount : Int = 0
-  
+
   var suburbanTileCounter : Int = 0
   // put a counter on the rural tiles
   var ruralTileCounter : Int = 0
@@ -231,7 +231,7 @@ class City():
             // add new coordinates to the this.cityTiles
             if urbanTileCounter != max_urban_tiles then
               BiomeMap.mapRegion(nextX)(nextY) = this.texturePacks(0)
-            //  println(f"Urban tile added to $nextX, $nextY") // for debug purposes
+              //println(f"Urban tile added to $nextX, $nextY") // for debug purposes
               urbanTileCounter += 1
               this.cityTiles.add((nextX, nextY))
             //  println(f"Urban tile for this city is $urbanTileCounter") // for debug purposes
@@ -303,7 +303,7 @@ class City():
 
 //  // implement a buildings list
 //  //private var buildingList : ListBuffer[A] = ListBuffer()
-//  // implement in city class 
+//  // implement in city class
 //  // logic of checking and managing buildings belong to the city
 //  private def hasBuilding(list : ListBuffer[A]): (Boolean, Boolean) =
 //    var water_station_flag : Boolean = false

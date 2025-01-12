@@ -1,16 +1,14 @@
 package BiomeMapApp.controller
 
 import BiomeMapApp.MainApp
-import scalafx.application.JFXApp3
 import javafx.fxml.FXML
-import scalafx.scene.Scene
-import scalafx.scene.image.Image
 import javafx.scene.layout.BorderPane
 import scalafx.scene.layout.BorderPane as BP
 import javafx.fxml.FXMLLoader
 import scalafx.scene.control.ScrollPane
 import javafx.scene.layout.Pane
 import model.BiomeMap
+import javafx.application.Platform
 
 class RootController:
   // inititate root border pane
@@ -39,6 +37,22 @@ class RootController:
     //MainApp.StartGameCycle()
   end LoadGame
 
-
+  def RefreshMapDisplay(): Unit=
+    // thread to slow down the game processing
+    Thread.sleep(2000)
+    // to store hvalue and vvalue
+    var vPointer: Double = BiomeMap.gameMap.vvalue.toDouble
+    var hPointer: Double = BiomeMap.gameMap.hvalue.toDouble
+    val gameMap : ScrollPane = BiomeMap.loadBiomeMap
+    //println(f"$vPointer,$hPointer")
+    gameMap.vvalue =  vPointer
+    gameMap.hvalue =  hPointer
+    Platform.runLater(
+      ()=> rootPane.setCenter(gameMap)
+    )
+    vPointer = gameMap.vvalue.toDouble
+    hPointer = gameMap.hvalue.toDouble
+    //println(f"$hPointer, $vPointer")
+  end RefreshMapDisplay
 end RootController
 

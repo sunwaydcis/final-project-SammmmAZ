@@ -37,6 +37,7 @@ object MainApp extends JFXApp3:
   // load root fxml file
   lazy val rootLoader: FXMLLoader = new FXMLLoader(getClass.getResource("/views/fxml/root.fxml"))
   // set controller for rootLoader
+  val rootController: RootController = rootLoader.getController[RootController]()
 
   override  def start(): Unit =
     // main entry point into the app
@@ -63,6 +64,7 @@ object MainApp extends JFXApp3:
     // select the delay to be between 1 - 5 seconds
     val delay : Int = Random.nextInt(5000) + 1000
     // use  the  future block
+
     Future:
       // Pause or delay for 1 second atleast
       Thread.sleep(delay)
@@ -71,7 +73,7 @@ object MainApp extends JFXApp3:
       // call the Platform Runlater
       Platform.runLater(BiomeMap.RunnableUpdateMapView())
       //println(f"Map updated times: ${Population.growthCounter}")
-      RefreshStage()
+      RefreshGamePane()
       ScheduleRandomMapUpdate()
   end ScheduleRandomMapUpdate
 
@@ -93,11 +95,7 @@ object MainApp extends JFXApp3:
     
     BiomeMap.gameMap.vvalue = vPointer
     BiomeMap.gameMap.hvalue = hPointer
-    Platform.runLater(
-      // reloads the BiomeMap Map UI View
-      mapScene.root = BiomeMap.loadBiomeMap
-    )
-    //println("Stage has been refreshed")
+    RefreshGamePane()
   end RefreshStage
 
   def TransitionToGame(): Unit=
@@ -105,3 +103,11 @@ object MainApp extends JFXApp3:
     rootController.LoadGame()
     MainApp.StartGameCycle()
   end TransitionToGame
+
+  def RefreshGamePane(): Unit=
+    val rootController: RootController = rootLoader.getController[RootController]()
+    rootController.RefreshMapDisplay()
+  end RefreshGamePane
+
+  def LoadGameToCenter(): Unit
+

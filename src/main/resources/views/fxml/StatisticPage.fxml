@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+<?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="views.fxml.StatisticPage"
-            prefHeight="400.0" prefWidth="600.0">
 
-</AnchorPane>
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="20.0" prefWidth="720.0" text="Statistics Available (Beta Release) : Population(Number Of Peole) Against Time(Days))" textAlignment="CENTER">
+         <font>
+            <Font name="Cambria Bold Italic" size="14.0" />
+         </font>
+      </Label>
+      <LineChart>
+        <xAxis>
+          <CategoryAxis prefWidth="1260.0" side="BOTTOM" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis prefHeight="680.0" side="LEFT" />
+        </yAxis>
+      </LineChart>
+   </children>
+</VBox>
