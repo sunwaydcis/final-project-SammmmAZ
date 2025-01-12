@@ -1,6 +1,6 @@
 package model
 
-import City.{GetGenerationPoint, GrowthFunctionExp, GrowthFunctionReg, RandomTextureAssigning, max_rural_tiles, max_suburban_tiles, max_urban_tiles}
+import City.{GetGenerationPoint, GrowthFunctionReg, RandomTextureAssigning, max_rural_tiles, max_suburban_tiles, max_urban_tiles}
 import scalafx.scene.image.Image
 
 import scala.collection.mutable.Queue
@@ -134,16 +134,11 @@ object City:
     points
   end GetGenerationPoint
 
-  private def GrowthFunctionReg(pop : Int) : Int =
+  private def GrowthFunctionReg(pop : Int, hosp : Int) : Int =
     // growth rate at constant : 0.03
     // so 5000 +
-    pop + (pop * 0.03).toInt
+    (pop + (pop * 0.05) + hosp * (pop*0.02)).toInt
   end GrowthFunctionReg
-
-  private def GrowthFunctionExp(pop : Int, hosp_count : Int): Int =
-    // growth rate for cities with Hospitals
-    pop + (pop * 0.05).toInt + (hosp_count *(pop * 0.02).toInt)
-  end GrowthFunctionExp
 
 end City
 
@@ -175,8 +170,8 @@ class City():
   protected[model] var ruralTilePoints: scala.collection.mutable.ListBuffer[(Int, Int)] = ListBuffer()
 
 
-  var hospitalCount : Int = 0
-
+  var hospitalCount : Int = 1
+  var commercialCenterCount : Int = 0
   var suburbanTileCounter : Int = 0
   // put a counter on the rural tiles
   var ruralTileCounter : Int = 0
@@ -194,6 +189,7 @@ class City():
     BiomeMap.mapRegion(coordsX)(coordsY) = texturePacks(0)
     // first tile of a city is always an urban tile
     this.urbanTileCounter += 1
+    Population.population_total += this.local_population
     //println(s"The city has been added at $coordsX, $coordsY")
   end AddCityToMap
 
@@ -278,19 +274,10 @@ class City():
   // define growth model function
   protected[model] def CityPopulationGrowth(): Unit =
     // check for conditions
-    if (this.local_population < City.max_population) && (!this.maxPopulationFlag) then // if population size smaller then max population limit & ~flag is true then proceed
-      hospitalCount match
-        case 0 => this.local_population = GrowthFunctionReg(this.local_population)
-        case x if 1 to 5 contains x => this.local_population = GrowthFunctionExp(this.local_population, x)
-        case x if x > 6 => println(f"Error, City has $x hospitals")
-      end match
-      else if this.local_population == City.max_population then
-        println("Max population has reached")
-        else
-          None
-    end if
-
+    //println(f"$local_population")
+    this.local_population = City.GrowthFunctionReg(pop = this.local_population,hosp =  this.hospitalCount)
     // once a new population value has occurred
+    //println(f"$local_population")
     // do check to ensure local population doesnt exceed threshold
     if this.local_population > City.max_population then
       this.local_population = City.max_population
@@ -300,9 +287,20 @@ class City():
       this.maxPopulationFlag = true
     end if
 
+  protected[model] def Revenue(): Double =
+    // count all tiles
+    val profit1 : Double = urbanTileCounter * 2.5
+    val profit2 : Double = suburbanTileCounter * 1.0
+    val profit3 : Double = ruralTileCounter * 0.75
+    val profit4 : Double = this.commercialCenterCount * 15.35
+
+    profit1 + profit2 + profit3 + profit4
+  end Revenue
 
 //  // implement a buildings list
-//  //private var buildingList : ListBuffer[A] = ListBuffer()
+  private var buildingList : BuildingList[Building] = new BuildingList()
+
+
 //  // implement in city class
 //  // logic of checking and managing buildings belong to the city
 //  private def hasBuilding(list : ListBuffer[A]): (Boolean, Boolean) =

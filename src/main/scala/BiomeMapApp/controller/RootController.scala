@@ -17,11 +17,8 @@ class RootController:
 
 
     //println(f"rootPane is initialized :${rootPane != null}")
-
-
-
   // define a method to update contents of
-  def LoadGame(): Unit =
+  @FXML def StartGame(): Unit =
     // load game components
     // 1 - load the ribbon display for in-game statistics & navigation between pages
     val ribbonLoader : FXMLLoader = new FXMLLoader(getClass.getResource("/views/fxml/RibbonDisplayGame.fxml"))
@@ -35,7 +32,7 @@ class RootController:
     rootPane.setCenter(gameMap)
     // start the game cycle
     //MainApp.StartGameCycle()
-  end LoadGame
+  end StartGame
 
   def RefreshMapDisplay(): Unit=
     // thread to slow down the game processing
@@ -54,5 +51,18 @@ class RootController:
     hPointer = gameMap.hvalue.toDouble
     //println(f"$hPointer, $vPointer")
   end RefreshMapDisplay
+  
+  
+  def StatsToCenterPane(): Unit =
+    Thread.sleep(1000)
+    val statsLoader : FXMLLoader = new FXMLLoader(getClass.getResource("/views/fxml/StatisticPage.fxml"))
+    rootPane.setCenter(statsLoader.load[Pane]())
+  end StatsToCenterPane
+  
+  def MapToCenterPane(): Unit =
+    Thread.sleep(1000)
+    val mapLoader : ScrollPane = BiomeMap.loadBiomeMap
+    rootPane.setCenter(mapLoader)
+  end MapToCenterPane
 end RootController
 

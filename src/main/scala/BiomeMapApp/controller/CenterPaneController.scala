@@ -1,7 +1,7 @@
 package BiomeMapApp.controller
 
 // import relevant libraries
-import BiomeMapApp.MainApp.TransitionToGame
+import BiomeMapApp.MainApp
 import scalafx.application.Platform
 import javafx.fxml.FXML
 import scalafx.scene.control.Button
@@ -27,7 +27,7 @@ class CenterPaneController:
     // loads the game stage to initiate the game cycle
     //presents the game stage
     // Initialize the game components
-    TransitionToGame()
+    MainApp.TransitionToGame()
   end OnClickStartGame
 
   @FXML

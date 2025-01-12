@@ -1,7 +1,7 @@
 package BiomeMapApp
 
 import BiomeMapApp.MainApp.getClass
-import BiomeMapApp.controller.{CenterPaneController, RootController}
+import controller.{CenterPaneController, RibbonBarGameController, RootController}
 import javafx.fxml.FXMLLoader
 import javafx.scene.Scene as JFXScene
 import javafx.scene.control.{ScrollPane, SplitPane}
@@ -17,7 +17,6 @@ import java.util.concurrent.{Executors, ScheduledExecutorService, TimeUnit}
 import scala.concurrent
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Random
-import controller.RootController
 
 object MainApp extends JFXApp3:
 
@@ -36,8 +35,7 @@ object MainApp extends JFXApp3:
 
   // load root fxml file
   lazy val rootLoader: FXMLLoader = new FXMLLoader(getClass.getResource("/views/fxml/root.fxml"))
-  // set controller for rootLoader
-  val rootController: RootController = rootLoader.getController[RootController]()
+  //lazy val ribbonLoader : FXMLLoader = new FXMLLoader(getClass.getResource("/views/fxml/RibbonDisplayGame.fxml"))
 
   override  def start(): Unit =
     // main entry point into the app
@@ -69,7 +67,8 @@ object MainApp extends JFXApp3:
       // Pause or delay for 1 second atleast
       Thread.sleep(delay)
       // call the grow population function
-      GrowPopulation(Population.growthCounter)
+      Population.GrowPopulationByCity(Population.growthCounter)
+      //UpdateRibbonGameLabels()
       // call the Platform Runlater
       Platform.runLater(BiomeMap.RunnableUpdateMapView())
       //println(f"Map updated times: ${Population.growthCounter}")
@@ -83,24 +82,25 @@ object MainApp extends JFXApp3:
   end StartGameCycle
 
 
-  private def RefreshStage(): Unit =
-    // Obtain HValue and VValue of the scroll pane
-    val vPointer : Double = BiomeMap.gameMap.vvalue.toDouble
-    val hPointer : Double = BiomeMap.gameMap.hvalue.toDouble
-    Platform.runLater(
-      // refresh the BiomeMap
-      ()  => (BiomeMap.loadBiomeMap)
-    )
-    // assign the scroll values
-    
-    BiomeMap.gameMap.vvalue = vPointer
-    BiomeMap.gameMap.hvalue = hPointer
-    RefreshGamePane()
-  end RefreshStage
+//  private def RefreshStage(): Unit =
+//    // Obtain HValue and VValue of the scroll pane
+//    val vPointer : Double = BiomeMap.gameMap.vvalue.toDouble
+//    val hPointer : Double = BiomeMap.gameMap.hvalue.toDouble
+//    Platform.runLater(
+//      // refresh the BiomeMap
+//      ()  => (BiomeMap.loadBiomeMap)
+//    )
+//    // assign the scroll values
+//
+//    BiomeMap.gameMap.vvalue = vPointer
+//    BiomeMap.gameMap.hvalue = hPointer
+//    RefreshGamePane()
+//  end RefreshStage
 
   def TransitionToGame(): Unit=
-    val rootController: RootController = rootLoader.getController[RootController]()
-    rootController.LoadGame()
+    val rootController: RootController = rootLoader.getController[controller.RootController]()
+    if rootController != null then println("Rootcontroller is loaded")
+    rootController.StartGame() // check
     MainApp.StartGameCycle()
   end TransitionToGame
 
@@ -109,5 +109,18 @@ object MainApp extends JFXApp3:
     rootController.RefreshMapDisplay()
   end RefreshGamePane
 
-  def LoadGameToCenter(): Unit
+  // invoked by the RibbonBarGameController Buttons
+  def LoadGameToCenter(): Unit=
+    val rootController: RootController = rootLoader.getController[RootController]()
+    //rootController.
 
+  def LoadStatToCenter(): Unit =
+    val rootController: RootController = rootLoader.getController[RootController]()
+    rootController.StatsToCenterPane()
+  end LoadStatToCenter
+
+  def UpdateRibbonGameLabels(): Unit =
+    val ribbonController : RibbonBarGameController = new FXMLLoader(getClass.getResource("/views/fxml/RibbonDisplayGame.fxml")).getController[RibbonBarGameController]()
+    if ribbonController != null then println("Ribbon Loader is loaded")
+    ribbonController.UpdateLabels()
+  end UpdateRibbonGameLabels

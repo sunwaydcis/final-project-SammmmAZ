@@ -34,7 +34,7 @@ fx:controller="BiomeMapApp.controller.RibbonBarGameController">
                   <Font name="Cambria Bold Italic" size="14.0" />
                </font>
             </Button>
-            <Button fx:id="ButtonToStats" maxWidth="-Infinity" mnemonicParsing="false" prefWidth="120.0" text="Statistics">
+            <Button fx:id="buttonToStats" maxWidth="-Infinity" mnemonicParsing="false" prefWidth="120.0" text="Statistics" onAction="#OnActionToStats">
                <font>
                   <Font name="Cambria Bold Italic" size="14.0" />
                </font>
@@ -60,21 +60,22 @@ fx:controller="BiomeMapApp.controller.RibbonBarGameController">
 
        <HBox prefHeight="32.0" prefWidth="1280.0">
          <children>
-            <ImageView fitHeight="32.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" fx:id="populationIcon" />
+             <ImageView fitHeight="32.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" fx:id="populationIcon" ></ImageView>
+
             <Label alignment="CENTER" opacity="0.89" prefHeight="32.0" prefWidth="200.0" text="Population" textAlignment="RIGHT">
                <font>
                   <Font name="Cambria Bold Italic" size="14.0" />
                </font>
             </Label>
             <Separator orientation="VERTICAL" prefHeight="15.0" prefWidth="8.0" />
-            <Label alignment="CENTER_RIGHT" prefHeight="32.0" prefWidth="100.0" text="10000">
+            <Label alignment="CENTER_RIGHT" prefHeight="32.0" prefWidth="100.0" fx:id="populationLabel" text="10000">
                <font>
                   <Font name="Britannic Bold" size="13.0" />
                </font>
             </Label>
             <Separator orientation="VERTICAL" prefHeight="200.0" />
             <ImageView fitHeight="32.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" fx:id="moneyIcon" />
-            <Label alignment="CENTER" opacity="0.86" prefHeight="32.0" prefWidth="200.0" text="Money" textAlignment="CENTER">
+            <Label alignment="CENTER" opacity="0.86" prefHeight="32.0" prefWidth="200.0" fx:id="moneyLabel" text="Money" textAlignment="CENTER">
                <font>
                   <Font name="Cambria Bold Italic" size="14.0" />
                </font>
