@@ -10,7 +10,7 @@ class BuildingList[B <: Building]:
   def Add(building : B): Unit=
     this.list_Buildings += building
     // println statement for debug
-    println(f"$building has been added to Building list")
+    //println(f"$building has been added to Building list")
   end Add
   
 end BuildingList

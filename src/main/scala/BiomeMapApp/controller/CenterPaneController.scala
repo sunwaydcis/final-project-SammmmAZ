@@ -4,6 +4,7 @@ package BiomeMapApp.controller
 import BiomeMapApp.MainApp
 import scalafx.application.Platform
 import javafx.fxml.FXML
+import javafx.scene.image.{Image, ImageView}
 import scalafx.scene.control.Button
 
 class CenterPaneController:
@@ -19,7 +20,8 @@ class CenterPaneController:
   // init exit button
   @FXML
   private var exitButton : Button = _
-  
+
+
 
   // handle button events
   @FXML
@@ -34,4 +36,11 @@ class CenterPaneController:
   private def OnClickExitButton(): Unit =
     Platform.exit()
   end OnClickExitButton
+
+  @FXML
+  private def OnClickGuideButton(): Unit =
+    // calls a function to load some instructions to the main screen
+    MainApp.ShowHowToDialogue()
+  end OnClickGuideButton
+
   

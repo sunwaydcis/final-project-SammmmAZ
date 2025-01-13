@@ -1,25 +1,21 @@
 package BiomeMapApp
 
-import BiomeMapApp.MainApp.getClass
 import controller.{RibbonBarGameController, RootController}
 import javafx.fxml.FXMLLoader
 import javafx.scene.Scene as JFXScene
-import javafx.scene.control.{ScrollPane, SplitPane}
-import javafx.scene.layout.BorderPane
-import model.BiomeMap.{AddMapToCity, RunnableUpdateMapView}
+import javafx.scene.control.Alert.AlertType
+import javafx.scene.layout.{BorderPane, VBox}
 import model.{BiomeMap, Population}
-import model.Population.{growthCounter}
 import scalafx.application.{JFXApp3, Platform}
 import scalafx.scene.Scene
 import scalafx.scene.image.Image
+import javafx.scene.control.{Alert, Label}
+import javafx.scene.image.ImageView
 
-import java.util.concurrent.{Executors, ScheduledExecutorService, TimeUnit}
 import scala.collection.mutable.ListBuffer
-import scala.concurrent
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Random
-
-import model.{Hospital,Farm,CommercialCenter}
+import java.net.URL
 
 object MainApp extends JFXApp3:
 
@@ -41,7 +37,6 @@ object MainApp extends JFXApp3:
   //lazy val ribbonLoader : FXMLLoader = new FXMLLoader(getClass.getResource("/views/fxml/RibbonDisplayGame.fxml"))
 
   lazy val ribbonLoader : FXMLLoader =  new FXMLLoader(getClass.getResource("/views/fxml/RibbonDisplayGame.fxml"))
-  val ribbonController : RibbonBarGameController = ribbonLoader.getController[RibbonBarGameController]()
 
   override  def start(): Unit =
     // main entry point into the app
@@ -67,25 +62,25 @@ object MainApp extends JFXApp3:
   // function to call map updates
   private def ScheduleRandomMapUpdate(): Unit =
     // select the delay to be between 1 - 5 seconds
-    val delay : Int = Random.nextInt(5000) + 1000
+    val delay : Int = 2000
     // use  the  future block
 
     Future:
       // Pause or delay for 1 second atleast
       Thread.sleep(delay)
-      if this.backgroundUserCommands.length != 0 then
-        for process <- this.backgroundUserCommands do
-          process()
-          println(process)
-        end for
-        this.backgroundUserCommands.clear()
-      else
-        println("Nothing to code")
-      end if
+      if !this.isPaused then
+        if this.backgroundUserCommands.length != 0 then
+          for process <- this.backgroundUserCommands do
+            process()
+            //println(process)
+          end for
+          this.backgroundUserCommands.clear()
 
       // call the grow population function
       Population.GrowPopulationByCity(Population.growthCounter)
-      RootCallUpdateGameLabels()
+      if Population.totalFood <= 0 then
+        ShowGameOverDialogue()
+      //RootCallUpdateGameLabels()
       // call the Platform Runlater
       Platform.runLater(BiomeMap.RunnableUpdateMapView())
       //println(f"Map updated times: ${Population.growthCounter}")
@@ -122,93 +117,129 @@ object MainApp extends JFXApp3:
     rootController.StatsToCenterPane()
   end LoadStatToCenter
 
-  def RootCallUpdateGameLabels(): Unit =
-    val rootController: RootController = rootLoader.getController[RootController]()
-    println(f"$rootController")
-    //rootController.UpdateRibbonLabels(population = Population.population_total, money = Population.totalMoney)
-  end RootCallUpdateGameLabels
 
   def BuyCity(): Unit =
     println("Buy City Accessed")
     println(f"${BiomeMap.ListOfCity.length}")
     BiomeMap.ListOfCity.length match
-      case 1 if Population.totalMoney >= 500  =>  Population.totalMoney -= 500; AppendUserInvokedProcess(() => BiomeMap.ActionAddCityToMap())
-      case 2 if Population.totalMoney >= 1000 => Population.totalMoney -= 1000; AppendUserInvokedProcess(() => BiomeMap.ActionAddCityToMap())
-      case 3 if Population.totalMoney >= 2000 => Population.totalMoney -= 2000; AppendUserInvokedProcess(() => BiomeMap.ActionAddCityToMap())
-      case _  => println("Max City reaced")
+      case 1 if Population.totalMoney >= 1500  =>  Population.totalMoney -= 1500; AppendUserInvokedProcess(() => BiomeMap.ActionAddCityToMap())
+      case 2 if Population.totalMoney >= 7000 => Population.totalMoney -= 7000; AppendUserInvokedProcess(() => BiomeMap.ActionAddCityToMap())
+      case 3 if Population.totalMoney >= 10000 => Population.totalMoney -= 10000; AppendUserInvokedProcess(() => BiomeMap.ActionAddCityToMap())
+      case _  => //println("Max City reaced")
   end BuyCity
 
   def BuyHospitals(): Unit =
     for city <- BiomeMap.ListOfCity do
-      AppendUserInvokedProcess(() => city.AddHospital())
+      AppendUserInvokedProcess(() => city.AddHospital() )
     end for
-  
-    
+  end BuyHospitals
+
+  def BuyFarms(): Unit =
+    for city <- BiomeMap.ListOfCity do
+      AppendUserInvokedProcess(() => city.AddFarm() )
+    end for
+  end BuyFarms
+
+  def BuyCommercialCenter(): Unit =
+    for city <- BiomeMap.ListOfCity do
+      AppendUserInvokedProcess(() => city.AddCommercialCenter())
+    end for
+  end BuyCommercialCenter
+
+  def BuyWaterStations():Unit =
+    for city <- BiomeMap.ListOfCity do
+      AppendUserInvokedProcess(() => city.AddWaterStation())
+    end for
+  end BuyWaterStations
+
+  def BuyElectricStations(): Unit =
+    for city <- BiomeMap.ListOfCity do
+      AppendUserInvokedProcess(() => city.AddElectricStation())
+    end for
+  end BuyElectricStations
+
+  def BuyUniversities(): Unit =
+    for city <- BiomeMap.ListOfCity do
+      AppendUserInvokedProcess(() => city.AddUniversity())
+    end for
+  end BuyUniversities
 
   def AppendUserInvokedProcess(process: () => Unit): Unit =
     backgroundUserCommands += process
   end AppendUserInvokedProcess
 
-  def condition1(): Boolean=
-    if BiomeMap.ListOfCity.length == 4 then
+  def BuyFood():Unit=
+    AppendUserInvokedProcess( () =>Population.totalMoney -= 1000)
+    AppendUserInvokedProcess(() => Population.totalFood += 2000)
+  end BuyFood
+
+
+
+  // to avoid having more than 4 cities
+  def condition1: Boolean=
+    if BiomeMap.ListOfCity.length >= 4 then
       true
     else
       false
     end if
   end condition1
-  
-  def condition2(): Boolean=
-    var hospCount : Int = 0
-    for city <- BiomeMap.ListOfCity do 
-      hospCount += city.hospitalCount
-    end for
-    
-    if hospCount == 4 then
-      // needs 4 hospital to win
-      true
-      else 
-        false
-  end condition2
-  
-  def BuyFarms(): Unit =
-    for city <- BiomeMap.ListOfCity do 
-      AppendUserInvokedProcess( () => city.AddFarm())
-  end BuyFarms
 
-  def Condition3(): Boolean =
-    var farmCount: Int = 0
-    for city <- BiomeMap.ListOfCity do 
-      farmCount += city.farmCount 
-    end for
 
-    if farmCount >= 2 then
-      true
-    else
-      false
-  end Condition3
-  
-  def BuyCommercialCenter(): Unit =
-    for city <- BiomeMap.ListOfCity do 
-      AppendUserInvokedProcess( () => city.AddCommercialCenter())
-    end for
-  end BuyCommercialCenter
-  
-  def condition4(): Boolean =
-    var comCC : Int = 0
-    for city <- BiomeMap.ListOfCity do 
-      comCC += city.commercialCenterCount
-    end for
-    
-    if comCC >= 2 then
-      true
-    else
-      false
-  end condition4
-  
-  
-  
-      
-  
 
+  private var isPaused : Boolean= false
+
+  def PauseGame(): Unit =
+    AppendUserInvokedProcess( () => isPaused = true)
+  end PauseGame
+
+  def ResumeGame(): Unit =
+    AppendUserInvokedProcess( () => isPaused = false)
+  end ResumeGame
+
+  def ShowEndDialogue(): Unit =
+    val alert: Alert = new Alert(AlertType.CONFIRMATION):
+      val resource: URL = getClass.getResource("/image/icons/gui_labels/dialogueWin.png")
+      initOwner(MainApp.stage)
+      setTitle("Congratulations, you have finished the game")
+      setHeaderText(" ")
+      setGraphic(new ImageView( new Image(resource.toExternalForm)))
+      setContentText(f"Statistics| Population Size : ${Population.population_total} | Money : ${Population.totalMoney} | Day : ${Population.growthCounter} days")
+    end alert
+    alert.showAndWait()
+    Platform.exit()
+  end ShowEndDialogue
+
+  def ShowHowToDialogue(): Unit =
+    val alert: Alert = new Alert(AlertType.INFORMATION)
+    val resource: URL = getClass.getResource("/image/icons/gui_labels/simulation_logo.png")
+      // load resource into Image View
+    alert.setGraphic(new ImageView(new Image(resource.toExternalForm)))
+    alert.setTitle("How to play Civilization Management - by Yusuf Arman")
+
+    val row_1 : Label = new Label("1. Reach 50000 population")
+    val row_2 : Label = new Label("2. Buildings can affect population behavior")
+    val row_3 : Label = new Label("3. Game ends if food is non-existent (Hint: 0)")
+    val row_4 : Label = new Label("4. Lastly, don't forget to enjoy")
+    alert.initOwner(MainApp.stage)
+    val box : VBox = new VBox()
+    box.getChildren.addAll(row_1,row_2,row_3,row_4)
+    alert.getDialogPane.setContent(box)
+    alert.setHeaderText("Follow the below")
+    alert.setContentText(null)
+    alert.showAndWait()
+  end ShowHowToDialogue
+
+  def ShowGameOverDialogue(): Unit =
+    val alert: Alert = new Alert(AlertType.CONFIRMATION):
+      val resource: URL = getClass.getResource("/image/icons/gui_labels/dialogueLooseLogo.png")
+      initOwner(MainApp.stage)
+      setTitle("You Lost")
+      setHeaderText("Population run out of food")
+      setGraphic(new ImageView(new Image(resource.toExternalForm)))
+      setContentText(f"Last know details| Population Size : ${Population.population_total} | Money : ${Population.totalMoney} | Day : ${Population.growthCounter} days")
+    alert.showAndWait()
+    Platform.exit()
+  end ShowGameOverDialogue
+end MainApp
 
 

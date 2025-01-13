@@ -17,6 +17,9 @@ class RibbonBarGameController:
   private var buttonToStats : Button = _
 
   @FXML
+  private var buttonToPause : Button = _
+
+  @FXML
   def OnActionToStats(): Unit =
      //calls the button to load map onto centerPane
      MainApp.LoadStatToCenter()
@@ -26,3 +29,20 @@ class RibbonBarGameController:
   def OnActionToMaps(): Unit =
     MainApp.LoadGameToCenter()
   end OnActionToMaps
+
+  var isPaused: Boolean = false
+  @FXML
+  def OnActionPause(): Unit =
+    if !isPaused then
+      MainApp.PauseGame()
+      MainApp.ribbonLoader.load()
+      buttonToPause.setText("Resume")
+      isPaused = true
+    else
+      MainApp.ResumeGame()
+      buttonToPause.setText("Pause")
+      isPaused = false
+    end if
+  end OnActionPause
+
+

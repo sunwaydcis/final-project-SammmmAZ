@@ -3,34 +3,53 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<VBox fx:id="actionBarVBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="145.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="BiomeMapApp.controller.ActionBarController">
+<VBox fx:id="actionBarVBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="145.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="BiomeMapApp.controller.ActionBarController">
    <children>
-      <Label prefHeight="17.0" prefWidth="91.0" text="Game Progress">
+      <Label prefHeight="45.0" prefWidth="91.0" text="Player Controls" wrapText="true">
          <VBox.margin>
-            <Insets top="30.0" />
+            <Insets bottom="35.0" top="25.0" />
          </VBox.margin>
+         <font>
+            <Font name="Bell MT" size="15.0" />
+         </font>
       </Label>
-      <ProgressBar fx:id="progressBar" prefHeight="25.0" prefWidth="145.0" progress="0" />
-      <Button fx:id="addCityButton" mnemonicParsing="false" onAction="#OnActionAddCity" prefHeight="25.0" prefWidth="102.0" text="Add City">
+      <Button fx:id="foodButton" mnemonicParsing="false" onAction="#OnActionBuyFood" text="Buy Food" />
+      <Button fx:id="addCityButton" mnemonicParsing="false" onAction="#OnActionAddCity" prefHeight="25.0" prefWidth="102.0" text="Add City" wrapText="true">
          <VBox.margin>
             <Insets bottom="20.0" top="20.0" />
          </VBox.margin></Button>
-      <Button fx:id="buyFarmButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="119.0" text="Buy Farm" onAction="#OnActionAddFarm">
+      <Button fx:id="buyWsButton" mnemonicParsing="false" onAction="#OnActionBuyWaterStation" text="Buy WaterStation">
+         <VBox.margin>
+            <Insets bottom="10.0" />
+         </VBox.margin>
+      </Button>
+      <Button fx:id="buyEsButton" mnemonicParsing="false" onAction="#OnActionBuyElectricStation" text="Buy Electric Station">
+         <VBox.margin>
+            <Insets top="10.0" />
+         </VBox.margin>
+      </Button>
+      <Button fx:id="buyUniButton" mnemonicParsing="false" onAction="#OnActionBuyUni" text="Buy University">
+         <VBox.margin>
+            <Insets top="20.0" />
+         </VBox.margin>
+      </Button>
+      <Button fx:id="buyFarmButton" mnemonicParsing="false" onAction="#OnActionAddFarm" prefHeight="25.0" prefWidth="119.0" text="Buy Farm">
          <VBox.margin>
             <Insets bottom="20.0" top="20.0" />
          </VBox.margin></Button>
-      <Button fx:id="buyHospitalButton" mnemonicParsing="false" text="Buy Hospital" onAction="#OnActionAddHospital">
+      <Button fx:id="buyHospitalButton" mnemonicParsing="false" onAction="#OnActionAddHospital" text="Buy Hospital">
          <VBox.margin>
             <Insets bottom="10.0" top="10.0" />
          </VBox.margin>
       </Button>
-      <Button fx:id="buyCommercialCenter" mnemonicParsing="false" text="Buy Commercial Center" onAction="#OnActionBuyCommercialCenter">
+      <Button fx:id="buyCommercialCenterButton" mnemonicParsing="false" onAction="#OnActionBuyCommercialCenter" text="Buy Commercial Center">
          <VBox.margin>
             <Insets bottom="10.0" top="10.0" />
          </VBox.margin>
       </Button>
-      <Button fx:id="quitButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="101.0" text="Quit Game" onAction="#OnActionQuitButton">
+      <Button fx:id="quitButton" mnemonicParsing="false" onAction="#OnActionQuitButton" prefHeight="25.0" prefWidth="101.0" text="Quit Game">
          <VBox.margin>
             <Insets bottom="20.0" top="20.0" />
          </VBox.margin></Button>

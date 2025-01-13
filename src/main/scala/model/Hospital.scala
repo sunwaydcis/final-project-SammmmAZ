@@ -6,8 +6,7 @@ import scalafx.scene.image.Image
 // Hospital companion object for static members of all instances of Class Hospital objects
 object Hospital:
   // to uniquely id a Hospital object upon constructor called
-  var hospital_name: String = f"Hospital_$totalHospital"
-  val hospitalTile: Image = new Image(getClass.getResource("/image/tiles/cityTile.png").toExternalForm)
+  val hospitalTile: Image = new Image(getClass.getResource("/image/tiles/city/hospital.png").toExternalForm)
   // counts all the hospitals in all cities
   // for updating population growth pattern
   var totalHospital: Int = 0
@@ -20,10 +19,14 @@ class Hospital(pointX: Int, pointY: Int) extends Building(
   // define a point / coordinate data upon constructor called
   val coordinate: (Int, Int) = (pointX, pointY)
   // everytime Hospital constructor is called, add one to the
-  Hospital.totalHospital += 1
-  val id: String = Hospital.hospital_name
   
   val hasLevels = true
   val upgradePrice = 1500
+
+  override def AddBuildingEffects(list: Array[Int]): Array[Int] =
+    list(3) = list(3) + 1
+    list
+  end AddBuildingEffects
+  
 end Hospital
 

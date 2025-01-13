@@ -19,9 +19,9 @@ object City:
 
   // tile related data
   private val max_tiles: Int = max_urban_tiles + max_suburban_tiles + max_rural_tiles
-  private val max_urban_tiles : Int= 300 // should be random between 30 - 60
-  private val max_suburban_tiles : Int= 750 // should be capped at val where suburban tile and urban tile sum up to 100
-  private val max_rural_tiles : Int= 1850
+  private val max_urban_tiles : Int= 200 // should be random between 30 - 60
+  private val max_suburban_tiles : Int= 250 // should be capped at val where suburban tile and urban tile sum up to 100
+  private val max_rural_tiles : Int= 200
 
   // population related data
   private val max_population : Int = 300000 // max per city should be between 300,000 and 400,000
@@ -58,30 +58,48 @@ object City:
       List(
       3 ,
       4 ,
-      5
+        3
     ),
       List(
         6 ,
         7 ,
-        8
+        6
       ),
       List(
         9 ,
         10,
-        11
+        9
       ))
 
   // helper data for ExpandCity Function
   // direction data:
   private var directions: scala.collection.mutable.Queue[(Int, Int)] = Queue(
-    (-1, 0), // North
-    (1, 0), // South
-    (0, -1), // West
-    (0, 1), // East
-    (-1, -1), // North-West
-    (-1, 1), // North-East
-    (1, -1), // South-West
-    (1, 1) // South-East
+    (-2,0),
+    (-1,-2),
+    (0,-2),
+    (-1, 0), // sliced
+    (-1, 1), // sliced
+    (1,-2),
+    (2,-2),
+    (-2,2), // sliced
+    (-2,1), // sliced
+    (2,-1),
+    (2,0),
+    (1,-1),  // sliced
+    (1,1),  // sliced
+    (2,1),
+    (-2,0), // sliced
+    (-2,-1), // sliced
+    (2,2),
+    (0,1), // sliced
+    (-1,-1), // sliced
+    (-2,1),
+    (-2,-2),
+    (1,2),
+    (0,2),
+    (1,0),  // sliced
+    (0,-1), // sliced
+    (-1,2)
   )
 
 
@@ -133,7 +151,8 @@ object City:
     points
   end GetGenerationPoint
 
-  private def GrowthFunctionReg(pop : Int, hosp : Int) : Int =
+  private def GrowthFunctionReg(pop : Int, hosp : Int, rate : Int) : Int =
+    Population.totalFood -= 1000 + Random.nextInt(rate)
     // growth rate at constant : 0.03
     // so 5000 +
     (pop + (pop * 0.05) + hosp * (pop*0.02)).toInt
@@ -149,6 +168,7 @@ class City():
   // initiate local population
   var local_population : Int = City.start_population
 
+  var consumption_rate : Int = (0.5 * local_population).toInt
   val texturePacks : List[Int] = RandomTextureAssigning
   // will have fixed texture packs
   val generationPoint : (Int, Int) = GetGenerationPoint
@@ -165,16 +185,15 @@ class City():
   protected[model] var ruralTilePoints: scala.collection.mutable.ListBuffer[(Int, Int)] = ListBuffer()
 
 
-  var hospitalCount : Int = 0
-  var commercialCenterCount : Int = 0
-  var waterStationCount : Int = 0
-  var electricStationCount : Int = 0
   var suburbanTileCounter : Int = 0
   // put a counter on the rural tiles
   var ruralTileCounter : Int = 0
 
+  var buildingEffects: Array[Int] = Array(0,0,0,0,0,0) // stored effect of building on money production
+
+
   // define variable to mark city will grow or not
-  private var maxPopulationFlag : Boolean = false
+  private var maxPopulationTotal : Int = City.max_population
 
   //  function to call edit or update BiomeMap Map Data
   protected[model] def AddCityToMap( point : (Int,Int)): Unit =
@@ -195,8 +214,9 @@ class City():
     // potential to modify:: with isExpandable? --> Stops this function from executing once total tiles has reach max amount of tiles
     // the function always update only one tile, by changing 1 on map array data to one of city's texture tile
     // step 1: define a flag for to initiate the loop
+    //val startTime = System.nanoTime()
     var cityExpandedFlag : Boolean = false
-    var tileToAdd: Int = 5
+    var tileToAdd: Int = 4
     // step 2 : initiate a loop
     while !cityExpandedFlag do
       // obtain the next direction from the direction vector collection
@@ -218,13 +238,13 @@ class City():
           val nextY : Int = y + dy
           //println(nextX +"," + nextY +" now at")
           // filter
-          if nextX > 0 && nextX < BiomeMap.mapHeight - 1 && nextY > 0 && nextY < BiomeMap.mapWidth - 1 && BiomeMap.mapRegion(nextX)(nextY) == 1 then
+          if CheckValidPoints(i = nextX, j = nextY) then
             // check if the urban city tile has reached is limit
 
             // add new coordinates to the this.cityTiles
             if urbanTileCounter != max_urban_tiles then
-              BiomeMap.mapRegion(nextX)(nextY) = this.texturePacks(0)
-              //println(f"Urban tile added to $nextX, $nextY") // for debug purposes
+              val tag: Int = this.texturePacks(0)
+              BiomeMap.mapRegion(nextX)(nextY) = tag
               urbanTileCounter += 1
               this.cityTiles.add((nextX, nextY))
             //  println(f"Urban tile for this city is $urbanTileCounter") // for debug purposes
@@ -235,7 +255,9 @@ class City():
               end if
               
             else if suburbanTileCounter !=  max_suburban_tiles then
-              BiomeMap.mapRegion(nextX)(nextY) = this.texturePacks(1)
+              val tag : Int = this.texturePacks(1)
+              BiomeMap.mapRegion(nextX)(nextY) = tag
+
             //  println(f"subsurban tile added to $nextX,$nextY") // for debug purposes
               this.suburbanTileCounter += 1
               this.cityTiles.add((nextX, nextY))
@@ -266,32 +288,77 @@ class City():
         end for
       end while
     end while
+    //val endTime = System.nanoTime()
+    //println(f"At ${cityTiles.size} : Duration : ${(endTime -startTime)/1e9d}")
   end ExpandCity
+
+  private def CheckValidPoints(i : Int, j : Int): Boolean=
+    (i > 0 ) && (i < BiomeMap.mapHeight - 1) && (j > 0) && (j < BiomeMap.mapWidth - 1) && BiomeMap.mapRegion(i)(j) == 1
+  end CheckValidPoints
+
+
+
+  private def IfValidTileThenConvert(point :(Int,Int), tagText: Int): Unit=
+    val (x,y) = point
+    var dir : Seq[(Int,Int)] =  Seq((-1,0),(0,1),(1,0),(0,-1))
+
+    var counter : Int = dir.size
+
+    while counter != 0 do
+      val dir_unit : (Int,Int) = dir.head
+      dir = dir.tail // to cycle the seq
+      val cX : Int = x + dir_unit._1
+      val cY : Int = y + dir_unit._2
+      if CheckValidPoints(i = cX, j = cY) then
+        BiomeMap.mapRegion(cX)(cY) = tagText
+      end if
+      counter -= 1
+    end while
+  end IfValidTileThenConvert
+
+
+
+
+
+
 
   // define growth model function
   protected[model] def CityPopulationGrowth(): Unit =
     // check for conditions
     //println(f"$local_population")
-    this.local_population = City.GrowthFunctionReg(pop = this.local_population,hosp =  this.hospitalCount)
+    this.local_population = City.GrowthFunctionReg(pop = this.local_population,hosp =this.buildingEffects(3), rate = this.consumption_rate)
     // once a new population value has occurred
     //println(f"$local_population")
     // do check to ensure local population doesnt exceed threshold
     if this.local_population > City.max_population then
       this.local_population = City.max_population
-      println("local population capped at 300000")
+      //println("local population capped at 300000")
       // for debug purposes
       // set max population flag to mark city has reached max population
-      this.maxPopulationFlag = true
     end if
 
-  protected[model] def Revenue(): Double =
+  protected[model] def Revenue(): Unit =
     // count all tiles
     val profit1 : Double = urbanTileCounter * 2.5
     val profit2 : Double = suburbanTileCounter * 1.0
     val profit3 : Double = ruralTileCounter * 0.75
-    val profit4 : Double = this.commercialCenterCount * 15.35
+    val profit4 : Double = this.buildingEffects(0) * 15.35
 
-    profit1 + profit2 + profit3 + profit4
+    // add money produced by revenue of all city tiles -- tax
+    Population.totalMoney += (profit1 + profit2 + profit3 + profit4)
+
+    // more source of revenue
+    // 0 - commercial center (produce more money)
+    // 1 - electric station (consume more money)
+    // 2 - Farm (produce food, add to population food)
+    // 3 - Hospital (increase birth rate)
+    // 4  - university (produce money)
+    // 5 - waterstation (consume some money)
+    Population.totalMoney += (this.buildingEffects(0) * 500)
+    Population.totalMoney -= (this.buildingEffects(1) * 150) // to provide electricity to city's
+    Population.totalFood += (this.buildingEffects(2) * 3500) // farms mass produce food resupply to goverment
+    Population.totalMoney += (this.buildingEffects(4) * 4000)
+    Population.totalMoney -= (this.buildingEffects(5)* 300)
   end Revenue
 
 //  // implement a buildings list
@@ -311,14 +378,12 @@ class City():
     val buildingCoords: (Int,Int) = RetrieveRandomPoint()
     val x : Int = buildingCoords(0)
     val y : Int = buildingCoords(1)
-
     val hospital : Hospital = new Hospital(pointX = x, pointY = y)
-    //BiomeMap.mapRegion(x)(y) = # add Hospital Texture Pack
+    BiomeMap.mapRegion(x)(y) = 12 // # add Hospital Texture Pack
     this.buildingList.Add(hospital)
-    this.hospitalCount += 1
-    // return this
+    this.buildingEffects = hospital.AddBuildingEffects(this.buildingEffects)
+    this.maxPopulationTotal = (City.max_population + City.max_population*(0.05 * this.buildingEffects(3)).ceil.toInt)
     Population.totalMoney -= hospital.buildingPrice
-    println("Hospital Added to city")
   end AddHospital
 
   def AddCommercialCenter(): Unit =
@@ -327,14 +392,13 @@ class City():
     val y : Int = builingCoords(1)
 
     val comCenter : CommercialCenter = new CommercialCenter(pointX = x, pointY = y)
-    // BiomeMap.mapRegion(x)(y) = # CommercialCenter texture pack
+    BiomeMap.mapRegion(x)(y) = 14//# CommercialCenter texture pack
     this.buildingList.Add(comCenter)
-    this.commercialCenterCount += 1
+    this.buildingEffects = comCenter.AddBuildingEffects(this.buildingEffects)
 
     Population.totalMoney -= comCenter.buildingPrice
   end AddCommercialCenter
 
-  var farmCount : Int = 0
   def AddFarm(): Unit =
     val coords : (Int,Int) = RetrieveRandomPoint()
     val x : Int = coords(0)
@@ -342,9 +406,47 @@ class City():
   //     add effect : city now produces food
   //                : price to buy food decreases
     val farm : Farm = new Farm(pointX = x, pointY = y)
-    // BiomeMap.mapRegion(x)(y) = # Farm texture reference
+    BiomeMap.mapRegion(x)(y) = 13 //# Farm texture reference
     this.buildingList.Add(farm)
-    this.farmCount += 1
+    this.buildingEffects = farm.AddBuildingEffects(this.buildingEffects)
     Population.totalMoney -= farm.buildingPrice
   end AddFarm
+
+
+  def AddUniversity(): Unit =
+    val coords : (Int,Int) = RetrieveRandomPoint()
+    val x : Int = coords(0)
+    val y : Int = coords(1)
+    val uni : University = new University(pointX = x, pointY = y)
+    BiomeMap.mapRegion(x)(y) = 15
+    this.buildingList.Add(uni)
+    this.buildingEffects = uni.AddBuildingEffects(this.buildingEffects)
+    Population.totalMoney -= uni.buildingPrice
+  end AddUniversity
+
+  def AddWaterStation(): Unit =
+    val coords : (Int,Int) = RetrieveRandomPoint()
+    val x: Int = coords(0)
+    val y : Int = coords(1)
+    val ws : WaterStation = new WaterStation(pointX = x, pointY = y)
+    BiomeMap.mapRegion(x)(y)= 16
+    this.buildingList.Add(ws)
+    this.buildingEffects = ws.AddBuildingEffects(this.buildingEffects)
+    Population.totalMoney -= ws.buildingPrice
+  end AddWaterStation
+
+  def AddElectricStation(): Unit =
+    val coords : (Int,Int) = RetrieveRandomPoint()
+    val x : Int = coords(0)
+    val y : Int = coords(1)
+    val es : Electricstation = new Electricstation(pointX = x, pointY = y)
+    BiomeMap.mapRegion(x)(y) = 17
+    this.buildingList.Add(es)
+    this.buildingEffects = es.AddBuildingEffects(this.buildingEffects)
+    Population.totalMoney -= es.buildingPrice
+  end AddElectricStation
+
+
+
 end City
+

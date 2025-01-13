@@ -74,11 +74,8 @@ class RootController:
 
   def MapToCenterPane(): Unit =
     Thread.sleep(1000)
-    val mapLoader : ScrollPane = BiomeMap.loadBiomeMap
+    val mapLoader : VBox = BiomeMap.ReturnMapWrapper()
     rootPane.setCenter(mapLoader)
   end MapToCenterPane
-
-
-
 end RootController
 

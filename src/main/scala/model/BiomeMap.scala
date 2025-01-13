@@ -1,6 +1,7 @@
 package model
 
 // import necessary libraries
+import BiomeMapApp.MainApp
 import scalafx.scene.Scene
 import scalafx.scene.control.{Label, ScrollPane, Separator}
 import scalafx.scene.image.{Image, ImageView}
@@ -11,6 +12,7 @@ import scala.util.{Failure, Success}
 import scala.concurrent.*
 import scala.concurrent.ExecutionContext.Implicits.global
 import javafx.application.Platform
+import scalafx.scene.control.ProgressBar
 import scalafx.geometry.Orientation.VERTICAL
 
 import scala.util.{Random, Success}
@@ -99,13 +101,22 @@ object BiomeMap:
   val city_set_3c : Image = new Image(getClass.getResource("/image/tiles/city/CT3_Rural.png").toExternalForm)
   // define data structure that will update the map
   val mapRegion: Array[Array[Int]] = Array.fill(mapHeight, mapWidth)(1)
+  // define other data for buildings
+  val comCenterImage : Image = CommercialCenter.commercialCenterTile
+  // define data for Electric Station
+  val electricStationTile : Image = Electricstation.electricStationTile
+  // define data for
+  val farmTile : Image = Farm.farmTile
+  val hospitalTile : Image = Hospital.hospitalTile
+  val uniTile : Image = University.UniversityTile
+  val waterStationTile : Image = WaterStation.waterStationTile
 
   // define a list of City objects
   var ListOfCity : ListBuffer[City] = ListBuffer()
 
   // to track city tiles
   var cityTiles : scala.collection.mutable.Set[(Int, Int)]= scala.collection.mutable.Set[(Int, Int)]() // Track city tile coordinates
-
+  val commercialCenter : Image = new Image(getClass.getResource("/image/tiles/cityTile.png").toExternalForm)
   // to map map region data to imageview
   // maps interger to image view
   val regionToSprite: Map[Int, Image] =
@@ -120,13 +131,13 @@ object BiomeMap:
       8 -> city_set_2c,
       9 -> city_set_3a,
       10 -> city_set_3b,
-      11 -> city_set_3c
-    // 12 -> Hospital,
-    // 13 -> Farm,
-    // 14 -> University,
-    // 15 -> CommercialCenter,
-    // 16 -> WaterStation,
-    // 17 -> ElectricStation
+      11 -> city_set_3c,
+      12 -> hospitalTile, // for hospital
+       13 -> farmTile, // for Farm
+       14 -> commercialCenter, // for commercial center
+      15 -> uniTile, // for university
+      16 -> waterStationTile, // for water tile
+      17 -> electricStationTile // for electric tile
     )
 
 
@@ -359,7 +370,7 @@ object BiomeMap:
   private def AddMapToCity(): Unit =
     // initiate a city object
     val city: City = new City()
-    println("AddMapToCity invoked")
+    //println("AddMapToCity invoked")
     // add city to the map
     city.AddCityToMap(city.generationPoint)
     // update BiomeMap member of CityList
@@ -367,7 +378,7 @@ object BiomeMap:
   end AddMapToCity
 
   def ActionAddCityToMap(): Unit=
-    println("ActionAddCityToMap invoked")
+    //println("ActionAddCityToMap invoked")
     AddMapToCity()
   end ActionAddCityToMap
 
@@ -398,6 +409,18 @@ object BiomeMap:
       style = "-fx-font-family: 'Cambria Bold Italic'; -fx-font-size: 14;"
     end moneyNumbers
 
+    val foodLabel : Label = new Label("Food: "):
+      prefHeight = 32
+      prefWidth = 200
+      style = "-fx-font-family: 'Cambria Bold Italic'; -fx-font-size: 14;"
+    end foodLabel
+
+    val foodNumbers: Label = new Label(Population.totalFood.toString):
+      prefHeight = 32
+      prefWidth = 200
+      style = "-fx-font-family: 'Cambria Bold Italic'; -fx-font-size: 14;"
+
+
     val dayLabel : Label = new Label("Days: "):
       prefHeight = 32
       prefWidth = 200
@@ -410,20 +433,59 @@ object BiomeMap:
       style = "-fx-font-family: 'Cambria Bold Italic'; -fx-font-size: 14;"
     end dayNumber
 
+    val gameProgressTag : Label = new Label("Game Progress"):
+      prefHeight = 32
+      prefWidth = 120
+      style = "-fx-font-family: 'Cambria Bold Italic'; -fx-font-size: 14;"
+
+    val gameProgress : ProgressBar = new ProgressBar():
+      progress = ReturnProgress()
+      prefHeight = 32
+      prefWidth = 800
+    end gameProgress
+
+
+    if gameProgress.getProgress == 1 then
+      MainApp.ShowEndDialogue()
+
+
+    // target population to win game is
     // Filled out predefined labels
     val labelHBox : HBox = new HBox():
-      children = Seq(popLabel,popNumbers,new Separator { orientation = VERTICAL }, moneyLabel, moneyNumbers,new Separator { orientation = VERTICAL }, dayLabel, dayNumber)
-      prefWidth = 1280
+      children = Seq(popLabel,popNumbers,new Separator { orientation = VERTICAL },foodLabel,foodNumbers,new Separator { orientation = VERTICAL }, moneyLabel, moneyNumbers,new Separator { orientation = VERTICAL }, dayLabel, dayNumber)
+      prefWidth = 1200
     end labelHBox
+
+    val progBox : HBox = new HBox():
+      children = Seq(gameProgressTag,gameProgress)
+      prefWidth = 1200
+      prefHeight = 32
+
 
     val mapPane : ScrollPane = loadBiomeMap
 
     val wrappedMapBox : VBox = new VBox():
-      children = Seq(labelHBox,mapPane)
+      children = Seq(labelHBox,progBox,mapPane)
     end wrappedMapBox
-
     return wrappedMapBox
   end ReturnMapWrapper
+
+  def ReturnProgress():Double =
+    if Population.population_total >= 10000 && Population.population_total <= 20000 then
+      0.2
+      else if Population.population_total >= 20000 && Population.population_total <= 30000 then
+        0.4
+      else if Population.population_total >= 30000 && Population.population_total <= 40000 then
+        0.6
+      else if Population.population_total >= 40000 && Population.population_total < 50000then
+        0.8
+      else if Population.population_total >= 50000 then
+        1.0
+        else
+        0.0
+    end if
+  end ReturnProgress
+
 
 
 

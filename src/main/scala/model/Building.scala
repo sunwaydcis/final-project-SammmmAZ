@@ -1,9 +1,6 @@
 package model
 
 import scalafx.scene.image.Image
-import Hospital.hospital_name
-import University.{uniCount, university_name}
-
 import scala.collection.immutable.List
 import scala.collection.mutable.ListBuffer
 import scala.language.postfixOps
@@ -17,4 +14,6 @@ abstract class Building(tileData : Image,price : Int):
   val buildingTileImage : Image = tileData
   // building cost
   var buildingPrice : Int = price
+  
+  def AddBuildingEffects(list : Array[Int]): Array[Int] 
 end Building

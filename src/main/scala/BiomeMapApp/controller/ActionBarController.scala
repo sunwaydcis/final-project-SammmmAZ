@@ -4,6 +4,7 @@ import BiomeMapApp.MainApp
 import javafx.fxml.FXML
 import javafx.scene.control.{Button, ProgressBar}
 import scalafx.application.Platform
+import scalafx.scene.control.Dialog
 // doesn't require a model object 
 // invokes methods from Building class and BiomeMap class 
 // ActionBarController class
@@ -33,36 +34,58 @@ class ActionBarController :
   // bind fxml id to variables
   // ensure fxml file is connected to ActionBarController class via fx:controller
   @FXML
-  var progressBar : ProgressBar = _
-  @FXML
   var addCityButton : Button = _
   @FXML
   var buyFarmButton : Button = _
   @FXML
   var buyHospitalButton : Button = _
   @FXML
-  var buyCommercialCenterButton : Button = _
+  private var buyCommercialCenterButton : Button = _
   @FXML
   var quitButton : Button = _
+  @FXML
+  private var buyWsButton : Button = _
+  @FXML
+  private var buyEsButton : Button = _
+  @FXML
+  var buyUniButton : Button = _
+  @FXML
+  var foodButton : Button = _
 
-  def initialize(): Unit =
-    progressBar.setProgress(0.1)
-  end initialize
 
+  var waterStationPurchased: Boolean = false
+  var electricStationPurchased : Boolean = false
+
+  def OnActionBuyWaterStation(): Unit=
+    MainApp.BuyWaterStations()
+    waterStationPurchased = true
+  end OnActionBuyWaterStation
+
+  def OnActionBuyFood(): Unit =
+    MainApp.BuyFood()
+  end OnActionBuyFood
+
+  def OnActionBuyElectricStation(): Unit =
+    MainApp.BuyElectricStations()
+    electricStationPurchased = true
+  end OnActionBuyElectricStation
 
   def OnActionAddCity(): Unit =
     MainApp.BuyCity()
-    //println("Command Executed")
     Condition1()
   end OnActionAddCity
 
-  def Condition1(): Unit =
-    if (MainApp.condition1()) then
+  private def Condition1(): Unit =
+    if MainApp.condition1 then
       addCityButton.setVisible(false)
       addCityButton.setManaged(false)
-      progressBar.setProgress(0.20)
     end if
   end Condition1
+
+  def OnActionBuyUni(): Unit=
+    MainApp.BuyUniversities()
+  end OnActionBuyUni
+
 
   def OnActionQuitButton():Unit=
     Platform.exit()
@@ -70,43 +93,18 @@ class ActionBarController :
 
   def OnActionAddHospital(): Unit =
     MainApp.BuyHospitals()
-    Condition2()
   end OnActionAddHospital
 
-  def Condition2(): Unit =
-    if (MainApp.condition2()) then
-      buyHospitalButton.setManaged(false)
-      buyHospitalButton.setManaged(false)
-      var cProgress : Double = progressBar.getProgress + 0.20
-      progressBar.setProgress(cProgress)
-  end Condition2
-  
+
+
   def OnActionAddFarm(): Unit =
     MainApp.BuyFarms()
-    Condition3()
   end OnActionAddFarm
-  
-  def Condition3(): Unit =
-    if MainApp.Condition3() then
-      buyFarmButton.setManaged(false)
-      buyFarmButton.setVisible(false)
-      var cProgress: Double = progressBar.getProgress + 0.20
-      progressBar.setProgress(cProgress)
-  end Condition3
-  
+
+
   def OnActionBuyCommercialCenter(): Unit =
     MainApp.BuyCommercialCenter()
-    Condition4()
   end OnActionBuyCommercialCenter
-  
-  def Condition4(): Unit =
-    if MainApp.condition4() then
-      buyCommercialCenterButton.setManaged(false)
-      buyCommercialCenterButton.setVisible(false)
-      var cProgress: Double = progressBar.getProgress + 0.20
-      progressBar.setProgress(cProgress)
-  end Condition4
-  
 
 
 end ActionBarController
